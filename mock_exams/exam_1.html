@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAS Mock Exam 1</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--fg:#1c2230;--muted:#5d6678;--line:#d9dee7;--accent:#1f5fbf;--ok:#1d8a4e;--bad:#c23b3b;--flag:#c98a00;--code:#f0f2f6}
+@media (prefers-color-scheme:dark){:root{--bg:#14171d;--card:#1d2129;--fg:#e6e9ef;--muted:#9aa3b2;--line:#323846;--accent:#6ea2ff;--ok:#47c27f;--bad:#ff7070;--flag:#f0b429;--code:#262b35}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line);padding:10px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+header h1{font-size:17px;margin:0;flex:1}
+#timer{font:600 20px ui-monospace,Consolas,monospace;padding:2px 10px;border-radius:6px;background:var(--code)}
+#timer.low{color:var(--bad)}
+main{max-width:960px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:14px}
+.qhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;color:var(--muted);font-size:14px}
+.stem{white-space:pre-wrap;margin:10px 0}
+pre{background:var(--code);border:1px solid var(--line);border-radius:8px;padding:12px;overflow:auto;font:14px/1.45 ui-monospace,Consolas,monospace;margin:0}
+.codewrap{position:relative;margin:8px 0}
+.copy{position:absolute;top:6px;right:6px}
+button{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:6px;padding:6px 12px;cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button:disabled{opacity:.45;cursor:default}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid var(--line);border-radius:8px;margin:6px 0;cursor:pointer}
+label.opt input{margin-top:5px}
+input[type=text]{font:16px ui-monospace,Consolas,monospace;padding:8px 10px;width:100%;max-width:360px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg)}
+.nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:space-between}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:6px}
+#grid button{padding:6px 0;font-size:14px}
+#grid .ans{background:var(--accent);color:#fff;border-color:var(--accent)}
+#grid .flg{outline:3px solid var(--flag);outline-offset:-3px}
+#grid .cur{box-shadow:0 0 0 2px var(--fg)}
+.legend{font-size:13px;color:var(--muted);margin-top:8px}
+.bar{position:relative;height:26px;background:var(--code);border-radius:6px;overflow:hidden;margin:8px 0 4px}
+.bar .fill{height:100%;background:var(--accent)}
+.bar .mark{position:absolute;top:0;bottom:0;width:2px;background:var(--flag)}
+.small{font-size:13px;color:var(--muted)}
+table{border-collapse:collapse;width:100%}
+td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;font-size:14px}
+.ok{color:var(--ok);font-weight:600}.bad{color:var(--bad);font-weight:600}
+.rev{border-left:4px solid var(--line);padding-left:12px;margin:14px 0}
+.rev.r1{border-color:var(--ok)}.rev.r0{border-color:var(--bad)}
+.hidden{display:none}
+@media (max-width:600px){main{padding:10px}.card{padding:12px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>SAS 9.4 Base Programming – Mock Exam 1 <span class="small">(unofficial practice)</span></h1>
+  <span id="timer">--:--</span>
+  <button id="submitTop" class="primary">Submit exam</button>
+</header>
+<main>
+  <section id="start" class="card">
+    <p><b>Instructions.</b> <span id="qcount"></span> questions, 135 minutes. The timer starts when you click Start and the exam auto-submits at 0:00.</p>
+    <p>Performance items: copy the data program into SAS (SAS OnDemand), run it, write the requested code, and type the result. Short answers ignore case and surrounding spaces; numeric answers must match the value SAS displays.</p>
+    <p class="small">Answers are hidden until you submit. Results are saved in this browser so you can compare attempts.</p>
+    <button id="startBtn" class="primary">Start exam</button>
+    <div id="history"></div>
+  </section>
+
+  <section id="exam" class="hidden">
+    <div class="card" id="qcard"></div>
+    <div class="card nav">
+      <button id="prev">◀ Previous</button>
+      <button id="flag">⚑ Flag for review</button>
+      <button id="next">Next ▶</button>
+    </div>
+    <div class="card">
+      <b>Overview</b>
+      <div id="grid" style="margin-top:8px"></div>
+      <div class="legend">Blue = answered · Outlined yellow = flagged · Plain = unanswered</div>
+    </div>
+  </section>
+
+  <section id="results" class="hidden"></section>
+</main>
+<script>
+const DATA = [{"n":1,"d":"D1","t":"mc","code":"","stem":"Which statement best describes a DATA step?","options":["It generally reads data from an input source, processes it, and creates a SAS table.","It processes an existing SAS table in a predefined way, for example to produce a report.","It is a global statement that sets an option for the whole SAS session.","It must always end with a QUIT statement."],"answer":0,"numeric":false,"expl":"DATA step = read input, process, create a SAS table. PROC step = process a table in a predefined way.","refCode":""},{"n":2,"d":"D2","t":"sa","code":"data staff;\n    input EmpID $ Dept $ Salary Bonus;\n    datalines;\nE01 Sales 52000 3000\nE02 Sales 48000 2000\nE03 IT 61000 4000\nE04 IT 57000 1000\nE05 HR 45000 2500\nE06 Sales 50000 5000\nE07 IT 65000 3000\nE08 HR 47000 1500\n;\nrun;","stem":"Run the program to create work.staff. Then write a DATA step that reads work.staff and creates work.itstaff containing only the rows where Dept is IT, and adds a column Total = Salary + Bonus.\n\nHow many rows are in work.itstaff?","options":null,"answer":["3"],"numeric":true,"expl":"IT rows are E03, E04, E07 → 3.","refCode":"data itstaff;\n    set staff;\n    where Dept=\"IT\";\n    Total=Salary+Bonus;\nrun;"},{"n":3,"d":"D3","t":"mc","code":"daat work.cars2;\n    set sashelp.cars;\nrun;","stem":"You submit the program above. What happens?","options":["A WARNING says SAS assumed DATA was misspelled; the step runs and work.cars2 is created.","An ERROR is written and the step is not processed.","No message is written; SAS silently corrects the keyword.","An ERROR is written and every later step in the program is skipped."],"answer":0,"numeric":false,"expl":"DAAT → WARNING (assumed DATA), DATA step still runs.","refCode":""},{"n":4,"d":"D4","t":"mc","code":"title \"Quarterly Report\";\nproc print data=sashelp.class;\nrun;\nproc means data=sashelp.class;\n    var Height;\nrun;\ntitle;\nproc print data=sashelp.shoes;\nrun;","stem":"Which reports display the title \"Quarterly Report\"?","options":["Only the first PROC PRINT report","The first PROC PRINT report and the PROC MEANS report","All three reports","None, because the TITLE statement is not followed by RUN"],"answer":1,"numeric":false,"expl":"TITLE stays in effect until `title;` clears it → PRINT #1 and MEANS.","refCode":""},{"n":5,"d":"D1","t":"sa","code":"options nodate;\ndata work.temps;\n    set work.raw;\n    TempF=TempC*1.8+32;\nrun;\ntitle \"Temperatures\";\nproc print data=work.temps;\nproc means data=work.temps;\n    var TempF;\nrun;\ntitle;","stem":"How many steps does this program contain? Enter a number.","options":null,"answer":["3"],"numeric":true,"expl":"DATA + PROC PRINT + PROC MEANS = 3 steps (OPTIONS/TITLE are global).","refCode":""},{"n":6,"d":"D2","t":"sa","code":"data scores;\n    input Student $ Test1 Test2 HeightIn;\n    datalines;\nAna 80 90 60\nBen 72 75 65\nCy 95 88 70\nDee 60 71 62\nEli 88 88 68\nFay 79 84 55\n;\nrun;","stem":"Run the program to create work.scores. Then create work.scores2 from work.scores that keeps only rows where Test1 is greater than 79, and adds:\n- Avg = the mean of Test1 and Test2 (use the MEAN function)\n- HeightCm = HeightIn * 2.54\n\nHow many rows are in work.scores2?","options":null,"answer":["3"],"numeric":true,"expl":"Ana, Cy, Eli → 3 (Fay = 79 is not > 79).","refCode":"data scores2;\n    set scores;\n    where Test1 > 79;\n    Avg=mean(Test1, Test2);\n    HeightCm=HeightIn*2.54;\nrun;"},{"n":7,"d":"D3","t":"mc","code":"data orders;\n    input OrderID $ Region $ Qty Price;\n    datalines;\nO1 East 2 15\nO2 West 1 40\nO3 East 5 8\nO4 North 3 20\nO5 West 4 12\nO6 East 1 30\n;\nrun;\n\ndaat orders2;\n    set orders;\n    Amount=Qty*Price;\nrun;\n\ntitle \"East Orders\";\nproc print data=orders2\n    var OrderID Amount;\n    where Region=\"East\";\nrun;\n\nproc means data=orders2 average maxdec=1;\n    var Amount;\n    class Region;\nrun;\ntitle;","stem":"Submit this program exactly as written (do not fix it). Which statement describes the result?","options":["Only WARNINGs are written; all steps run and both reports are produced.","The DATA step runs and work.orders2 is created, but neither PROC PRINT nor PROC MEANS produces a report.","Nothing after the first error runs, so work.orders2 is not created.","work.orders2 is created and the PROC PRINT report appears, but PROC MEANS fails."],"answer":1,"numeric":false,"expl":"DAAT = warning (step runs); missing ; and AVERAGE = errors (steps don't run).","refCode":""},{"n":8,"d":"D2","t":"mc","code":"data trip;\n    set work.raw;\n    Miles=Km*0.621;\nrun;","stem":"Which statement in this DATA step creates a new column and does not begin with a SAS keyword?","options":["data trip;","set work.raw;","Miles=Km*0.621;","run;"],"answer":2,"numeric":false,"expl":"The assignment statement (Miles=…) creates a column and has no leading keyword.","refCode":""},{"n":9,"d":"D4","t":"sa","code":"data staff;\n    input EmpID $ Dept $ Salary Bonus;\n    datalines;\nE01 Sales 52000 3000\nE02 Sales 48000 2000\nE03 IT 61000 4000\nE04 IT 57000 1000\nE05 HR 45000 2500\nE06 Sales 50000 5000\nE07 IT 65000 3000\nE08 HR 47000 1500\n;\nrun;","stem":"Run the program to create work.staff. Then run:\n\nproc means data=staff mean;\n    var Salary;\n    class Dept;\nrun;\n\nWhat is the mean Salary for Dept = Sales? Enter the number without commas.","options":null,"answer":["50000"],"numeric":true,"expl":"(52000+48000+50000)/3 = 50000.","refCode":"proc means data=staff mean;\n    var Salary;\n    class Dept;\nrun;"},{"n":10,"d":"D1","t":"sa","code":"options nodate;\ndata work.temps;\n    set work.raw;\n    TempF=TempC*1.8+32;\nrun;\ntitle \"Temperatures\";\nproc print data=work.temps;\nproc means data=work.temps;\n    var TempF;\nrun;\ntitle;","stem":"How many statements are in the DATA step of this program? Enter a number.","options":null,"answer":["4"],"numeric":true,"expl":"DATA, SET, assignment, RUN = 4.","refCode":""},{"n":11,"d":"D2","t":"sa","code":"data staff;\n    input EmpID $ Dept $ Salary Bonus;\n    datalines;\nE01 Sales 52000 3000\nE02 Sales 48000 2000\nE03 IT 61000 4000\nE04 IT 57000 1000\nE05 HR 45000 2500\nE06 Sales 50000 5000\nE07 IT 65000 3000\nE08 HR 47000 1500\n;\nrun;","stem":"Using work.staff, create work.itstaff with only Dept = IT rows and Total = Salary + Bonus (same as the earlier task if you already did it).\n\nWhat is the value of Total for EmpID E04?","options":null,"answer":["58000"],"numeric":true,"expl":"57000 + 1000 = 58000.","refCode":"data itstaff;\n    set staff;\n    where Dept=\"IT\";\n    Total=Salary+Bonus;\nrun;"},{"n":12,"d":"D3","t":"mc","code":"proc print data=sashelp.class\n    var Name Age;\nrun;","stem":"The log underlines the word VAR. Which explanation is correct?","options":["VAR is not valid in PROC PRINT and must be deleted.","The problem is just before VAR: the PROC PRINT statement has no semicolon, so VAR is read as an invalid option and the step is not processed.","SAS adds the missing semicolon, prints Name and Age, and writes a WARNING.","The column names Name and Age must be enclosed in quotation marks."],"answer":1,"numeric":false,"expl":"Valid word underlined → look right before it: missing semicolon.","refCode":""},{"n":13,"d":"D2","t":"sa","code":"data scores;\n    input Student $ Test1 Test2 HeightIn;\n    datalines;\nAna 80 90 60\nBen 72 75 65\nCy 95 88 70\nDee 60 71 62\nEli 88 88 68\nFay 79 84 55\n;\nrun;","stem":"Create work.scores2 from work.scores keeping rows where Test1 > 79, with Avg = mean of Test1 and Test2 and HeightCm = HeightIn * 2.54.\n\nWhat is HeightCm for Student Eli? Enter the value exactly as SAS displays it.","options":null,"answer":["172.72"],"numeric":true,"expl":"68 × 2.54 = 172.72.","refCode":"data scores2;\n    set scores;\n    where Test1 > 79;\n    Avg=mean(Test1, Test2);\n    HeightCm=HeightIn*2.54;\nrun;\nproc print data=scores2;\nrun;"},{"n":14,"d":"D1","t":"mc","code":"","stem":"Which of these is NOT a global statement?","options":["TITLE","OPTIONS","LIBNAME","VAR"],"answer":3,"numeric":false,"expl":"VAR belongs inside a PROC step.","refCode":""},{"n":15,"d":"D4","t":"sa","code":"","stem":"Write the complete statement (including the semicolon) that clears all titles, as used at the end of the course demo programs.","options":null,"answer":["title;","title"],"numeric":false,"expl":"title;","refCode":""},{"n":16,"d":"D2","t":"sa","code":"data staff;\n    input EmpID $ Dept $ Salary Bonus;\n    datalines;\nE01 Sales 52000 3000\nE02 Sales 48000 2000\nE03 IT 61000 4000\nE04 IT 57000 1000\nE05 HR 45000 2500\nE06 Sales 50000 5000\nE07 IT 65000 3000\nE08 HR 47000 1500\n;\nrun;","stem":"Using work.staff, create work.big that keeps only rows where Bonus is at least 3000 and adds Total = Salary + Bonus. Then run:\n\nproc means data=big mean maxdec=0;\n    var Total;\nrun;\n\nWhat mean Total is displayed?","options":null,"answer":["60750"],"numeric":true,"expl":"Bonus ≥ 3000 → E01,E03,E06,E07 → totals 55000,65000,55000,68000 → mean 60750.","refCode":"data big;\n    set staff;\n    where Bonus>=3000;\n    Total=Salary+Bonus;\nrun;\n\nproc means data=big mean maxdec=0;\n    var Total;\nrun;"},{"n":17,"d":"D3","t":"sa","code":"data orders;\n    input OrderID $ Region $ Qty Price;\n    datalines;\nO1 East 2 15\nO2 West 1 40\nO3 East 5 8\nO4 North 3 20\nO5 West 4 12\nO6 East 1 30\n;\nrun;\n\ndaat orders2;\n    set orders;\n    Amount=Qty*Price;\nrun;\n\ntitle \"East Orders\";\nproc print data=orders2\n    var OrderID Amount;\n    where Region=\"East\";\nrun;\n\nproc means data=orders2 average maxdec=1;\n    var Amount;\n    class Region;\nrun;\ntitle;","stem":"This program contains syntax errors. Fix every error so that all steps run, then run it.\n\nIn the PROC MEANS output, what is the mean Amount for Region = East? Enter the value as displayed (MAXDEC=1).","options":null,"answer":["33.3"],"numeric":true,"expl":"East amounts 30, 40, 30 → 100/3 → 33.3.","refCode":"data orders2;\n    set orders;\n    Amount=Qty*Price;\nrun;\n\ntitle \"East Orders\";\nproc print data=orders2;\n    var OrderID Amount;\n    where Region=\"East\";\nrun;\n\nproc means data=orders2 mean maxdec=1;\n    var Amount;\n    class Region;\nrun;\ntitle;"},{"n":18,"d":"D1","t":"sa","code":"options nodate;\ndata work.temps;\n    set work.raw;\n    TempF=TempC*1.8+32;\nrun;\ntitle \"Temperatures\";\nproc print data=work.temps;\nproc means data=work.temps;\n    var TempF;\nrun;\ntitle;","stem":"How many global statements does this program contain? Enter a number.","options":null,"answer":["3"],"numeric":true,"expl":"OPTIONS + TITLE + TITLE; = 3.","refCode":""},{"n":19,"d":"D2","t":"mc","code":"data kids;\n    set sashelp.class;\n    /* where Age\u003c13;\n    Ratio=Weight/Height; */\n    *drop Height;\nrun;","stem":"SASHELP.CLASS has 19 rows and 5 columns (Name, Sex, Age, Height, Weight). What does work.kids contain?","options":["19 rows and 5 columns","Fewer than 19 rows and 6 columns","19 rows and 4 columns","Fewer than 19 rows and 5 columns"],"answer":0,"numeric":false,"expl":"All three statements are comments → copy of 19 rows × 5 columns.","refCode":""},{"n":20,"d":"D4","t":"sa","code":"data staff;\n    input EmpID $ Dept $ Salary Bonus;\n    datalines;\nE01 Sales 52000 3000\nE02 Sales 48000 2000\nE03 IT 61000 4000\nE04 IT 57000 1000\nE05 HR 45000 2500\nE06 Sales 50000 5000\nE07 IT 65000 3000\nE08 HR 47000 1500\n;\nrun;","stem":"Using work.staff, run:\n\nproc means data=staff mean maxdec=1;\n    var Bonus;\n    class Dept;\nrun;\n\nWhat mean Bonus is displayed for Dept = Sales?","options":null,"answer":["3333.3"],"numeric":true,"expl":"10000/3 = 3333.33 → MAXDEC=1 → 3333.3.","refCode":"proc means data=staff mean maxdec=1;\n    var Bonus;\n    class Dept;\nrun;"},{"n":21,"d":"D3","t":"mc","code":"proc means data=sashelp.class average max maxdec=1;\n    var Height;\nrun;","stem":"What happens when this step is submitted?","options":["An ERROR is written because AVERAGE is not a valid option; the step does not run. Use MEAN instead.","A WARNING is written; SAS assumes MEAN and the step runs.","The step runs, ignores AVERAGE, and displays only the maximum.","An ERROR is written because MAXDEC= must come before the statistic keywords."],"answer":0,"numeric":false,"expl":"AVERAGE is invalid → ERROR, step not run → use MEAN.","refCode":""},{"n":22,"d":"D2","t":"sa","code":"data scores;\n    input Student $ Test1 Test2 HeightIn;\n    datalines;\nAna 80 90 60\nBen 72 75 65\nCy 95 88 70\nDee 60 71 62\nEli 88 88 68\nFay 79 84 55\n;\nrun;","stem":"Create work.scores2 from work.scores keeping rows where Test1 > 79, with Avg = mean of Test1 and Test2 and HeightCm = HeightIn * 2.54.\n\nWhat is Avg for Student Cy?","options":null,"answer":["91.5"],"numeric":true,"expl":"(95+88)/2 = 91.5.","refCode":"data scores2;\n    set scores;\n    where Test1 > 79;\n    Avg=mean(Test1, Test2);\n    HeightCm=HeightIn*2.54;\nrun;"},{"n":23,"d":"D1","t":"mc","code":"proc print data=sashelp.class;\nproc means data=sashelp.class;\n    var Age;\nrun;","stem":"The PROC PRINT step has no RUN statement. What happens?","options":["The PROC MEANS statement ends the PROC PRINT step, and both steps run.","PROC PRINT is ignored because it has no RUN statement.","An ERROR is written and neither step runs.","The two procedures are combined into a single step."],"answer":0,"numeric":false,"expl":"Next PROC/DATA keyword ends the previous step → both run.","refCode":""},{"n":24,"d":"D2","t":"sa","code":"data staff;\n    input EmpID $ Dept $ Salary Bonus;\n    datalines;\nE01 Sales 52000 3000\nE02 Sales 48000 2000\nE03 IT 61000 4000\nE04 IT 57000 1000\nE05 HR 45000 2500\nE06 Sales 50000 5000\nE07 IT 65000 3000\nE08 HR 47000 1500\n;\nrun;","stem":"Using work.staff, run a PROC PRINT step that lists only rows where Dept is Sales and Salary is at least 50000.\n\nHow many rows are listed?","options":null,"answer":["2"],"numeric":true,"expl":"E01 (52000) and E06 (50000, boundary) → 2.","refCode":"proc print data=staff;\n    where Dept=\"Sales\" and Salary>=50000;\nrun;"},{"n":25,"d":"D3","t":"sa","code":"data pets;\n    input Name $ Species $ Age Weight;\n    datalines;\nMax Dog 5 30\nBella Cat 3 9\nRocky Dog 8 35\nLuna Cat 10 11\nCoco Bird 2 1\nDuke Dog 1 20\nMilo Cat 6 12\n;\nrun;\n\ndata seniors set pets;\n    where Age>=6;\n    WeightLb=Weight*2.2;\nrun;\n\ntitle \"Senior Pets;\nprc print data=seniors;\nrun;\ntitle;","stem":"This program contains several syntax errors after the first DATA step. Fix all of them (tip: fix before submitting), then run it.\n\nHow many rows are in work.seniors?","options":null,"answer":["3"],"numeric":true,"expl":"Age ≥ 6 → Rocky, Luna, Milo = 3.","refCode":"data seniors;\n    set pets;\n    where Age>=6;\n    WeightLb=Weight*2.2;\nrun;\n\ntitle \"Senior Pets\";\nproc print data=seniors;\nrun;\ntitle;"},{"n":26,"d":"D4","t":"mc","code":"","stem":"In SAS Studio you submit a program that contains only a DATA step that creates a table. Which tab stays empty?","options":["Log","Output Data","Results","Code"],"answer":2,"numeric":false,"expl":"No PROC report → Results tab empty.","refCode":""},{"n":27,"d":"D2","t":"sa","code":"data staff;\n    input EmpID $ Dept $ Salary Bonus;\n    datalines;\nE01 Sales 52000 3000\nE02 Sales 48000 2000\nE03 IT 61000 4000\nE04 IT 57000 1000\nE05 HR 45000 2500\nE06 Sales 50000 5000\nE07 IT 65000 3000\nE08 HR 47000 1500\n;\nrun;","stem":"Using work.staff, create work.staff2 that is a copy of work.staff with a new column Total = Salary + Bonus.\n\nWhat is Total for EmpID E06?","options":null,"answer":["55000"],"numeric":true,"expl":"50000 + 5000 = 55000.","refCode":"data staff2;\n    set staff;\n    Total=Salary+Bonus;\nrun;"},{"n":28,"d":"D1","t":"mc","code":"","stem":"You submit a program, then submit it again. What happens to the log and results?","options":["In SAS Studio and Enterprise Guide they are replaced; in the SAS windowing environment they are appended.","They are appended in every interface.","SAS Studio appends; Enterprise Guide replaces.","They are replaced in every interface."],"answer":0,"numeric":false,"expl":"Studio/EG replace; windowing environment appends.","refCode":""},{"n":29,"d":"D2","t":"sa","code":"data scores;\n    input Student $ Test1 Test2 HeightIn;\n    datalines;\nAna 80 90 60\nBen 72 75 65\nCy 95 88 70\nDee 60 71 62\nEli 88 88 68\nFay 79 84 55\n;\nrun;","stem":"Run this DATA step after creating work.scores:\n\ndata scores2;\n    set scores;\n    *where Test1 > 79;\n    Avg=mean(Test1, Test2);\n    HeightCm=HeightIn*2.54;\nrun;\n\nHow many rows are in work.scores2?","options":null,"answer":["6"],"numeric":true,"expl":"*where is a comment → all 6 rows.","refCode":"data scores2;\n    set scores;\n    *where Test1 > 79;\n    Avg=mean(Test1, Test2);\n    HeightCm=HeightIn*2.54;\nrun;"},{"n":30,"d":"D4","t":"sa","code":"data scores;\n    input Student $ Test1 Test2 HeightIn;\n    datalines;\nAna 80 90 60\nBen 72 75 65\nCy 95 88 70\nDee 60 71 62\nEli 88 88 68\nFay 79 84 55\n;\nrun;","stem":"Create work.scores2 (rows where Test1 > 79; Avg = mean of Test1 and Test2; HeightCm = HeightIn * 2.54). Then run:\n\nproc means data=scores2 mean maxdec=2;\n    var Avg;\nrun;\n\nWhat mean is displayed?","options":null,"answer":["88.17"],"numeric":true,"expl":"Avg of Ana 85, Cy 91.5, Eli 88 → 88.1667 → 88.17.","refCode":"data scores2;\n    set scores;\n    where Test1 > 79;\n    Avg=mean(Test1, Test2);\n    HeightCm=HeightIn*2.54;\nrun;\n\nproc means data=scores2 mean maxdec=2;\n    var Avg;\nrun;"},{"n":31,"d":"D3","t":"mc","code":"data canada;\n    set sashelp.shoes;\n    where Region=\"Canada;\nrun;","stem":"What is wrong with this step, and what does the course suggest for spotting it before you run the code?","options":["An unmatched quotation mark; the editor's color coding (or Format Code) shows the rest of the program being treated as a quoted string.","A missing RUN statement; check the Results tab.","Region must be written in uppercase; use Format Code to fix the case.","WHERE is not allowed in a DATA step; check the Output Data tab."],"answer":0,"numeric":false,"expl":"Missing closing quote; color coding / Format Code reveals it.","refCode":""},{"n":32,"d":"D2","t":"sa","code":"data orders;\n    input OrderID $ Region $ Qty Price;\n    datalines;\nO1 East 2 15\nO2 West 1 40\nO3 East 5 8\nO4 North 3 20\nO5 West 4 12\nO6 East 1 30\n;\nrun;\n\ndaat orders2;\n    set orders;\n    Amount=Qty*Price;\nrun;\n\ntitle \"East Orders\";\nproc print data=orders2\n    var OrderID Amount;\n    where Region=\"East\";\nrun;\n\nproc means data=orders2 average maxdec=1;\n    var Amount;\n    class Region;\nrun;\ntitle;","stem":"Fix the syntax errors in this program and run it.\n\nIn work.orders2, what is Amount for OrderID O5?","options":null,"answer":["48"],"numeric":true,"expl":"4 × 12 = 48.","refCode":"data orders2;\n    set orders;\n    Amount=Qty*Price;\nrun;\n\ntitle \"East Orders\";\nproc print data=orders2;\n    var OrderID Amount;\n    where Region=\"East\";\nrun;\n\nproc means data=orders2 mean maxdec=1;\n    var Amount;\n    class Region;\nrun;\ntitle;"},{"n":33,"d":"D1","t":"sa","code":"","stem":"How many rows does the sample table SASHELP.CLASS contain? Enter a number.","options":null,"answer":["19"],"numeric":true,"expl":"19 students.","refCode":""},{"n":34,"d":"D2","t":"mc","code":"/* Program A */\ndata copy1;set sashelp.class;run;\n\n/* Program B */\ndata copy2;\n    set sashelp.class;\nrun;","stem":"How do the tables created by Program A and Program B compare?","options":["They are identical; spacing and line breaks do not matter to SAS.","Program A fails because each statement must be on its own line.","Program A creates a table with no rows because of the missing line breaks.","Program B fails because statements must start in column one."],"answer":0,"numeric":false,"expl":"Spacing doesn't matter → identical tables.","refCode":""},{"n":35,"d":"D3","t":"sa","code":"data pets;\n    input Name $ Species $ Age Weight;\n    datalines;\nMax Dog 5 30\nBella Cat 3 9\nRocky Dog 8 35\nLuna Cat 10 11\nCoco Bird 2 1\nDuke Dog 1 20\nMilo Cat 6 12\n;\nrun;\n\ndata seniors set pets;\n    where Age>=6;\n    WeightLb=Weight*2.2;\nrun;\n\ntitle \"Senior Pets;\nprc print data=seniors;\nrun;\ntitle;","stem":"Fix all syntax errors in this program and run it.\n\nIn work.seniors, what is WeightLb for Name = Luna? Enter the value as displayed.","options":null,"answer":["24.2"],"numeric":true,"expl":"11 × 2.2 = 24.2.","refCode":"data seniors;\n    set pets;\n    where Age>=6;\n    WeightLb=Weight*2.2;\nrun;\n\ntitle \"Senior Pets\";\nproc print data=seniors;\nrun;\ntitle;"},{"n":36,"d":"D4","t":"sa","code":"data orders;\n    input OrderID $ Region $ Qty Price;\n    datalines;\nO1 East 2 15\nO2 West 1 40\nO3 East 5 8\nO4 North 3 20\nO5 West 4 12\nO6 East 1 30\n;\nrun;\n\ndaat orders2;\n    set orders;\n    Amount=Qty*Price;\nrun;\n\ntitle \"East Orders\";\nproc print data=orders2\n    var OrderID Amount;\n    where Region=\"East\";\nrun;\n\nproc means data=orders2 average maxdec=1;\n    var Amount;\n    class Region;\nrun;\ntitle;","stem":"Fix the syntax errors in this program and run it.\n\nHow many rows does the corrected PROC PRINT report list?","options":null,"answer":["3"],"numeric":true,"expl":"East rows O1, O3, O6 → 3.","refCode":"data orders2;\n    set orders;\n    Amount=Qty*Price;\nrun;\n\ntitle \"East Orders\";\nproc print data=orders2;\n    var OrderID Amount;\n    where Region=\"East\";\nrun;\n\nproc means data=orders2 mean maxdec=1;\n    var Amount;\n    class Region;\nrun;\ntitle;"},{"n":37,"d":"D2","t":"sa","code":"data staff;\n    input EmpID $ Dept $ Salary Bonus;\n    datalines;\nE01 Sales 52000 3000\nE02 Sales 48000 2000\nE03 IT 61000 4000\nE04 IT 57000 1000\nE05 HR 45000 2500\nE06 Sales 50000 5000\nE07 IT 65000 3000\nE08 HR 47000 1500\n;\nrun;","stem":"Using work.staff, create work.hr containing only Dept = HR rows and a new column Raise = Salary * 0.1.\n\nWhat is Raise for EmpID E08?","options":null,"answer":["4700"],"numeric":true,"expl":"47000 × 0.1 = 4700.","refCode":"data hr;\n    set staff;\n    where Dept=\"HR\";\n    Raise=Salary*0.1;\nrun;"},{"n":38,"d":"D1","t":"sa","code":"data staff;\n    input EmpID $ Dept $ Salary Bonus;\n    datalines;\nE01 Sales 52000 3000\nE02 Sales 48000 2000\nE03 IT 61000 4000\nE04 IT 57000 1000\nE05 HR 45000 2500\nE06 Sales 50000 5000\nE07 IT 65000 3000\nE08 HR 47000 1500\n;\nrun;","stem":"Using work.staff, create work.staff2 as a copy of work.staff with one new column Total = Salary + Bonus.\n\nHow many columns does work.staff2 have?","options":null,"answer":["5"],"numeric":true,"expl":"4 input columns + Total = 5.","refCode":"data staff2;\n    set staff;\n    Total=Salary+Bonus;\nrun;"},{"n":39,"d":"D2","t":"sa","code":"data scores;\n    input Student $ Test1 Test2 HeightIn;\n    datalines;\nAna 80 90 60\nBen 72 75 65\nCy 95 88 70\nDee 60 71 62\nEli 88 88 68\nFay 79 84 55\n;\nrun;","stem":"Using work.scores, create work.drop2 that keeps only rows where Test2 is less than Test1.\n\nHow many rows are in work.drop2?","options":null,"answer":["1"],"numeric":true,"expl":"Only Cy (88 \u003c 95); Eli is equal → 1.","refCode":"data drop2;\n    set scores;\n    where Test2 \u003c Test1;\nrun;"},{"n":40,"d":"D1","t":"mc","code":"","stem":"You replace FILEPATH in setup.sas with the path to your EPG1V2/data folder and run it. Which log note confirms the setup worked?","options":["Libref PG1 was successfully assigned, followed by the engine and physical name","Table PG1 was successfully created","WARNING: Libref PG1 is not assigned","No note is written when a library is assigned"],"answer":0,"numeric":false,"expl":"\"Libref PG1 was successfully assigned\" + engine + physical name.","refCode":""},{"n":41,"d":"D4","t":"sa","code":"","stem":"In SAS Studio, after you run a PROC PRINT step, which tab of the program window shows the report? Enter the tab name.","options":null,"answer":["results","results tab"],"numeric":false,"expl":"Results.","refCode":""},{"n":42,"d":"D4","t":"mc","code":"","stem":"What does MAXDEC=2 do on a PROC MEANS statement?","options":["Rounds the displayed statistics to two decimal places.","Limits the analysis to the first two variables in the VAR statement.","Allows at most two values for each CLASS variable.","Permanently stores the data values in the table with two decimals."],"answer":0,"numeric":false,"expl":"Rounds the statistics shown to 2 decimals.","refCode":""},{"n":43,"d":"D2","t":"mc","code":"","stem":"Which WHERE statement keeps only the rows where the character column Region has the value East?","options":["where Region=\"East\";","where Region=East;","where Region=\"East;","where \"Region\"=\"East\";"],"answer":0,"numeric":false,"expl":"Character values are quoted: where Region=\"East\";","refCode":""}];
+const MINUTES = 135;
+const KEY = 'sasMockExam1_attempts';
+const L = 'ABCD';
+let cur = 0, answers = {}, flags = {}, endAt = 0, tick = null, done = false;
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function load(){ try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch(e){ return []; } }
+function save(a){ try { localStorage.setItem(KEY, JSON.stringify(a)); } catch(e){} }
+
+function showHistory(){
+  const h = load(); if(!h.length) return;
+  $('history').innerHTML = '<h3>Previous attempts</h3><table><tr><th>Date</th><th>Score</th><th>D1</th><th>D2</th><th>D3</th><th>D4</th><th>Time used</th></tr>' +
+    h.map(a => `<tr><td>${esc(a.date)}</td><td>${a.correct}/${a.total} (${a.pct}%)</td>${['D1','D2','D3','D4'].map(d=>`<td>${a.dom[d] ?? '-'}%</td>`).join('')}<td>${esc(a.used)}</td></tr>`).join('') + '</table>';
+}
+
+function codeBlock(code){
+  return `<div class="codewrap"><button class="copy" data-code="${esc(code)}">Copy code</button><pre>${esc(code)}</pre></div>`;
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('.copy'); if(!b) return;
+  const t = b.getAttribute('data-code');
+  const ok = () => { b.textContent = 'Copied'; setTimeout(()=>b.textContent='Copy code',1200); };
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(t).then(ok, () => fallback(t, ok));
+  else fallback(t, ok);
+});
+function fallback(t, ok){ const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); ok();}catch(e){} ta.remove(); }
+
+function render(){
+  const q = DATA[cur];
+  let h = `<div class="qhead"><span>Question ${q.n} of ${DATA.length}</span><span>${flags[cur]?'⚑ Flagged':''}</span></div>`;
+  if (q.code) h += codeBlock(q.code);
+  h += `<div class="stem">${esc(q.stem)}</div>`;
+  if (q.t === 'mc') {
+    q.options.forEach((o,k) => h += `<label class="opt"><input type="radio" name="opt" value="${k}" ${answers[cur]===k?'checked':''}><span><b>${L[k]}.</b> ${esc(o)}</span></label>`);
+  } else {
+    h += `<input type="text" id="sa" autocomplete="off" placeholder="Type your answer" value="${esc(answers[cur] ?? '')}">`;
+  }
+  $('qcard').innerHTML = h;
+  if (q.t === 'mc') document.querySelectorAll('input[name=opt]').forEach(r => r.onchange = () => { answers[cur] = +r.value; grid(); });
+  else $('sa').oninput = e => { const v = e.target.value; if (v.trim()==='') delete answers[cur]; else answers[cur] = v; grid(); };
+  $('prev').disabled = cur === 0; $('next').disabled = cur === DATA.length-1;
+  $('flag').textContent = flags[cur] ? '⚑ Unflag' : '⚑ Flag for review';
+  grid();
+}
+function grid(){
+  $('grid').innerHTML = DATA.map((q,i)=>`<button data-i="${i}" class="${answers[i]!==undefined?'ans':''} ${flags[i]?'flg':''} ${i===cur?'cur':''}">${i+1}</button>`).join('');
+  $('grid').querySelectorAll('button').forEach(b => b.onclick = () => { cur = +b.dataset.i; render(); });
+}
+$('prev').onclick = () => { if(cur>0){cur--;render();} };
+$('next').onclick = () => { if(cur<DATA.length-1){cur++;render();} };
+$('flag').onclick = () => { flags[cur] = !flags[cur]; render(); };
+
+function fmt(ms){ ms=Math.max(0,ms); const s=Math.floor(ms/1000); return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; }
+function startTimer(){
+  endAt = Date.now() + MINUTES*60000;
+  tick = setInterval(() => { const left = endAt - Date.now(); $('timer').textContent = fmt(left); $('timer').classList.toggle('low', left < 600000); if (left <= 0) submit(true); }, 500);
+}
+
+const norm = s => String(s).trim().toLowerCase().replace(/\s+/g,'');
+function isCorrect(q, a){
+  if (a === undefined) return false;
+  if (q.t === 'mc') return a === q.answer;
+  if (q.numeric) {
+    const x = parseFloat(String(a).replace(/,/g,'').trim());
+    return !isNaN(x) && /^[-+]?[\d.,]+$/.test(String(a).trim()) && Math.abs(x - parseFloat(q.answer[0])) < 1e-9;
+  }
+  return q.answer.some(k => norm(k) === norm(a));
+}
+
+function submit(auto){
+  if (done) return;
+  if (!auto) {
+    const un = DATA.length - Object.keys(answers).length;
+    if (!window.__confirmSubmit) { window.__confirmSubmit = true; $('submitTop').textContent = un ? `Confirm submit (${un} unanswered)` : 'Confirm submit'; setTimeout(()=>{window.__confirmSubmit=false; if(!done) $('submitTop').textContent='Submit exam';},4000); return; }
+  }
+  done = true; clearInterval(tick);
+  const used = fmt(MINUTES*60000 - Math.max(0,endAt-Date.now()));
+  let correct = 0; const dom = {}, domN = {};
+  const rows = DATA.map((q,i) => { const ok = isCorrect(q, answers[i]); if(ok) correct++; domN[q.d]=(domN[q.d]||0)+1; dom[q.d]=(dom[q.d]||0)+(ok?1:0); return ok; });
+  const pct = Math.round(100*correct/DATA.length);
+  const domPct = {}; Object.keys(domN).forEach(d => domPct[d] = Math.round(100*dom[d]/domN[d]));
+  const hist = load(); hist.push({date:new Date().toLocaleString(), correct, total:DATA.length, pct, dom:domPct, used}); save(hist);
+
+  $('exam').classList.add('hidden'); $('submitTop').classList.add('hidden');
+  const mine = (q,a) => a===undefined ? '<i>(no answer)</i>' : (q.t==='mc' ? `${L[a]}. ${esc(q.options[a])}` : esc(a));
+  const right = q => q.t==='mc' ? `${L[q.answer]}. ${esc(q.options[q.answer])}` : esc(q.answer[0]);
+  $('results').innerHTML = `
+  <div class="card">
+    <h2>Results${auto?' (time expired – auto-submitted)':''}</h2>
+    <p><b>Raw score: ${correct} / ${DATA.length} (${pct}%)</b> · Time used ${used}</p>
+    <div class="bar"><div class="fill" style="width:${pct}%"></div><div class="mark" style="left:75%"></div></div>
+    <div class="small">Yellow line = 75% practice benchmark (unofficial target). The real A00-231 exam reports a scaled 200–1000 score; its exact mapping is not public.</div>
+    <h3>By domain</h3>
+    <table><tr><th>Domain</th><th>Correct</th><th>%</th></tr>
+    ${Object.keys(domN).sort().map(d=>`<tr><td>${d}</td><td>${dom[d]}/${domN[d]}</td><td>${domPct[d]}%</td></tr>`).join('')}</table>
+    <p class="small">D1 Access and create data structures · D2 Manage data · D3 Error handling · D4 Generate reports and output</p>
+    <button onclick="location.reload()">Back to start</button>
+  </div>
+  <div class="card"><h2>Review</h2>
+  ${DATA.map((q,i)=>`<div class="rev r${rows[i]?1:0}">
+    <div class="qhead"><span>Question ${q.n} · ${q.d}</span><span class="${rows[i]?'ok':'bad'}">${rows[i]?'Correct':'Incorrect'}${flags[i]?' · ⚑':''}</span></div>
+    ${q.code?codeBlock(q.code):''}<div class="stem">${esc(q.stem)}</div>
+    <div>Your answer: ${mine(q,answers[i])}</div><div>Correct answer: <b>${right(q)}</b></div>
+    <div class="small" style="margin-top:6px">${esc(q.expl)}</div>
+    ${q.refCode?`<details><summary class="small">Reference solution code</summary>${codeBlock(q.refCode)}</details>`:''}
+  </div>`).join('')}</div>`;
+  $('results').classList.remove('hidden'); window.scrollTo(0,0);
+}
+$('submitTop').onclick = () => { if (!$('exam').classList.contains('hidden')) submit(false); };
+$('submitTop').classList.add('hidden');
+$('qcount').textContent = DATA.length;
+$('startBtn').onclick = () => { $('start').classList.add('hidden'); $('exam').classList.remove('hidden'); $('submitTop').classList.remove('hidden'); startTimer(); render(); };
+$('timer').textContent = fmt(MINUTES*60000);
+showHistory();
+</script>
+</body>
+</html>

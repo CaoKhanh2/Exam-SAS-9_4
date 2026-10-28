@@ -1,0 +1,72 @@
+<goal>
+Read both SAS courses below, lesson by lesson, and turn them into exam-ready study notes for the SAS 9.4 Base Programming – Performance-Based Exam (A00-231). Save everything to a single Markdown file that grows as you work, so progress survives if the session ends.
+</goal>
+
+<context>
+- Account: minhwhisky700@gmail.com. I'm already signed in to learn.sas.com in Chrome, and the Claude in Chrome extension is linked to this account.
+- Program URL: https://learn.sas.com/totara/program/view.php?id=28
+- Course 1: SAS® Programming 1: Essentials (I'm 34% through it)
+- Course 2: SAS® Programming 2: Data Manipulation Techniques (not started)
+- Exam: 40–45 multiple-choice and short-answer questions, 135 minutes, pass mark 725/1000, based on SAS 9.4 M5. Many items require writing or fixing real SAS code and reporting a result, so the notes must teach doing, not just recognizing.
+- Exam domains, used as tags in the notes:
+  - D1 Access and create data structures (20–25%)
+  - D2 Manage data (35–40%)
+  - D3 Error handling (15–20%)
+  - D4 Generate reports and output (15–20%)
+</context>
+
+<known_environment_issues>
+These came up in a previous session. Apply the workarounds without asking me again.
+1. The extension's safety filter blocks script-based text extraction because SAS code such as `data=sashelp.cars;` looks like cookie data. Do not try to bypass the filter. Read pages from screenshots instead.
+2. The course player opens in its own tab. Press Alt+W inside the player to switch to all-text mode, and use the transcript panel for video pages, so videos aren't gaps.
+3. The player tab can freeze, and screenshots then time out after about 30 seconds. If that happens twice in a row, stop and ask me to bring Chrome to the front and press F5. Don't keep retrying silently.
+</known_environment_issues>
+
+<rules>
+- Read-only. Do not submit quizzes, click Submit or Complete, change progress, or change any setting. For "Lesson Review and Quiz" pages, read the questions to learn what is tested, but don't answer them in the player.
+- Never invent course content. If a page can't be read, record it under Gaps and continue.
+- Write in your own words. Short quotes are fine when exact wording matters, but don't reproduce long passages. These notes are for my personal study.
+- Code examples must be original and correct SAS 9.4. Mark anything you're unsure of with [VERIFY] rather than guessing.
+- Keep SAS keywords, syntax, and log messages exactly as SAS writes them. Write explanations in English.
+</rules>
+
+<scope>
+- From "Course Overview and Data Setup", include only "Setting Up Your Practice Files", as a short setup note covering how the practice data and library are created. Skip Welcome, the SAS Programming Process demo, and Practicing in This Course.
+- Then cover every lesson of Course 1, followed by every lesson of Course 2.
+- Lesson 1 of Course 1 has these pages: Lesson Overview, SAS Programming Interfaces, Demo: Programming with SAS Studio, Demo: Programming with SAS Enterprise Guide, Practice Using SAS Software, SAS Program Structure, Activity, SAS Program Syntax, Demo: Understanding SAS Program Syntax, Demo: Finding and Resolving Syntax Errors, Activity, Lesson Summary, Learning More, Lesson Review and Quiz.
+</scope>
+
+<output_file>
+Path: ./sas_a00-231_study_notes.md
+
+On the first run, create the file with:
+1. A "Progress" section: a checklist of every lesson in both courses, with status (todo, done, or partial) and the date.
+2. A "Gaps" section, initially empty.
+
+After finishing each lesson, append its notes to the file using the template below, update Progress, and only then move on. If the file already exists, read Progress first and resume from the first lesson that isn't done.
+
+Lesson template:
+## [Course] – Lesson [N]: [Title]
+**Exam domains:** D1–D4 tags
+**Key concepts:** concise explanations of the core ideas
+**Must-know syntax:** each statement, procedure, option, or function with a one-line purpose and its defaults
+**Code examples:** 1–3 short, commented snippets that run on sashelp tables or the course practice data
+**Common errors & log messages:** typical ERROR, WARNING, and NOTE text, the cause, and the fix
+**Exam traps:** subtle points likely to be tested, such as PDV behavior, compile vs. execution phase, missing values, variable length and type, implicit OUTPUT, and option defaults
+**Self-check:** 3 questions (multiple choice or "predict the output"), with answers and explanations at the end of the section
+**Gaps:** pages that couldn't be read
+</output_file>
+
+<final_deliverables>
+When every lesson is done, append these to the same file:
+1. A cheat sheet organized by domain (D1–D4).
+2. A comparison table of commonly confused pairs: WHERE vs. IF, KEEP=/DROP= data set options vs. KEEP/DROP statements, SET concatenation vs. MERGE, PROC MEANS vs. FREQ vs. UNIVARIATE, FORMAT vs. INFORMAT, DO loop variants, ARRAY, and RETAIN vs. the sum statement.
+3. The top 20 debugging scenarios, each with the faulty code, the log message, and the fix.
+4. 10 performance-based practice tasks in the exam's style. Each gives data and a requirement, and I write the code and report a number. Put the answer keys in a separate section at the very end.
+</final_deliverables>
+
+<working_style>
+- Start by confirming you can see the player tab. Then list the lesson structure of both courses, write the Progress checklist to the file, and wait for my "go".
+- After each lesson, give me a short chat summary: which lesson you finished, any gaps, and which lesson is next. Then ask "Continue?". The full notes go in the file, not the chat.
+- Prioritize accuracy and exam relevance over length. A tight, correct note beats an exhaustive one.
+</working_style>

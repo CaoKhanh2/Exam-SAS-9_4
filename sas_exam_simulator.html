@@ -1,0 +1,2309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAS® 9.4 Base Programming - Performance-Based Practice Exam (A00-231) | SAS Learn</title>
+  <style>
+    :root {
+      --sas-blue: #006699;
+      --sas-blue-dark: #032d60;
+      --sas-blue-bright: #0b5cab;
+      --sas-cream-bg: #fdf5d9;
+      --sas-cream-border: #fbeed5;
+      --sas-gray-bg: #f5f5f5;
+      --sas-gray-border: #e3e3e3;
+      --sas-text: #333333;
+      --sas-muted: #666666;
+      --sas-pass: #2e7d32;
+      --sas-fail: #c62828;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      color: var(--sas-text);
+      background-color: #ffffff;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* 1. TOP WHITE BAR (SAS | LEARN) */
+    .top-white-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 28px;
+      background: #ffffff;
+      border-bottom: 1px solid #e6e6e6;
+      height: 52px;
+    }
+
+    .sas-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .sas-logo-svg {
+      height: 28px;
+      width: auto;
+      display: block;
+    }
+
+    .sas-brand-divider {
+      color: #006699;
+      font-weight: 300;
+      font-size: 22px;
+      line-height: 1;
+      margin: 0 2px;
+    }
+
+    .sas-brand-learn {
+      color: #006699;
+      font-size: 18px;
+      font-weight: 400;
+      letter-spacing: 1.2px;
+    }
+
+    .top-white-right {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      color: #333;
+      font-size: 13px;
+    }
+
+    .top-white-right span {
+      cursor: pointer;
+    }
+
+    .globe-icon {
+      width: 18px;
+      height: 18px;
+      stroke: #006699;
+      vertical-align: middle;
+    }
+
+    /* 2. DARK NAVY NAVIGATION BAR (#032d60) */
+    .navy-navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--sas-blue-dark);
+      color: #ffffff;
+      padding: 8px 28px;
+      min-height: 50px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .navy-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-courses {
+      background-color: #0d6efd;
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      padding: 7px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: #ffffff;
+      border-radius: 3px;
+      overflow: hidden;
+      width: 255px;
+      height: 32px;
+    }
+
+    .search-box input {
+      border: none;
+      outline: none;
+      padding: 4px 10px;
+      font-size: 13px;
+      width: 100%;
+      color: #333;
+    }
+
+    .search-box button {
+      background: transparent;
+      border: none;
+      padding: 0 10px;
+      color: #006699;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .navy-right {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      font-size: 13.5px;
+    }
+
+    .navy-right a {
+      color: #ffffff;
+      text-decoration: none;
+      opacity: 0.95;
+      white-space: nowrap;
+    }
+
+    .navy-right a:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+    /* 3. USER BAR & TIMER BAR */
+    .user-subbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 28px;
+      background: #ffffff;
+      border-bottom: 1px solid #ececec;
+    }
+
+    .subbar-left-tools {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #eef6fb;
+      border: 1px solid #bce8f1;
+      color: #005580;
+      padding: 3px 10px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .timer-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff8e6;
+      border: 1px solid #f0ad4e;
+      color: #8a6d3b;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-family: Consolas, monospace;
+      font-size: 13.5px;
+      font-weight: 700;
+    }
+
+    .timer-pill.warning {
+      background: #fdecea;
+      border-color: #d9534f;
+      color: #a94442;
+    }
+
+    .btn-mini {
+      background: #ffffff;
+      border: 1px solid #cccccc;
+      color: #333333;
+      padding: 4px 10px;
+      border-radius: 3px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .btn-mini:hover {
+      background: #f0f0f0;
+      border-color: #999;
+    }
+
+    .user-profile-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #006699;
+      font-size: 13px;
+      margin-left: auto;
+    }
+
+    .user-avatar-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #e6e6e6;
+      color: #777777;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+    }
+
+    /* 4. MAIN 3-COLUMN QUIZ LAYOUT */
+    .quiz-workspace {
+      display: grid;
+      grid-template-columns: 270px 155px 1fr;
+      gap: 20px;
+      padding: 20px 28px 50px 28px;
+      max-width: 1600px;
+      margin: 0 auto;
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .quiz-workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* LEFT COLUMN: QUIZ NAVIGATION CARD */
+    .quiz-nav-card {
+      background: #f9f9f9;
+      border: 1px solid #e3e3e3;
+      border-radius: 2px;
+      padding: 14px 16px 18px 16px;
+    }
+
+    .quiz-nav-title {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #555555;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin: 0 0 12px 0;
+    }
+
+    .quiz-nav-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 14px;
+    }
+
+    .qn-btn {
+      width: 25px;
+      height: 30px;
+      border: 1px solid #b8b8b8;
+      border-radius: 3px;
+      background: #ffffff;
+      color: #333333;
+      font-size: 11.5px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 2px;
+      cursor: pointer;
+      position: relative;
+      user-select: none;
+      overflow: hidden;
+    }
+
+    .qn-btn:hover {
+      border-color: #006699;
+    }
+
+    /* Active / current page box has thick dark border like Moodle */
+    .qn-btn.active {
+      border: 2px solid #222222;
+      font-weight: 700;
+      padding-top: 1px;
+    }
+
+    /* Answered state: bottom half shaded gray */
+    .qn-btn.answered::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 45%;
+      background-color: #d0d0d0;
+      z-index: 0;
+    }
+
+    /* Review Mode states */
+    .qn-btn.review-correct::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 45%;
+      background-color: #5cb85c;
+      z-index: 0;
+    }
+
+    .qn-btn.review-wrong::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 45%;
+      background-color: #d9534f;
+      z-index: 0;
+    }
+
+    /* Flagged red triangle in top-right corner */
+    .qn-btn.flagged::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 8px 8px 0;
+      border-color: transparent #d9534f transparent transparent;
+      z-index: 2;
+    }
+
+    .qn-btn span {
+      position: relative;
+      z-index: 1;
+    }
+
+    .finish-attempt-link {
+      display: inline-block;
+      color: #006699;
+      text-decoration: none;
+      font-size: 13px;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+
+    .finish-attempt-link:hover {
+      text-decoration: underline;
+    }
+
+    /* MIDDLE COLUMN: QUESTION STATUS CARD */
+    .question-info-card {
+      background: var(--sas-gray-bg);
+      border: 1px solid var(--sas-gray-border);
+      padding: 12px 14px;
+      font-size: 12.5px;
+      color: #333333;
+      min-height: 92px;
+    }
+
+    .q-info-heading {
+      font-size: 15px;
+      font-weight: 700;
+      color: #333333;
+      margin: 0 0 8px 0;
+    }
+
+    .q-info-line {
+      margin: 4px 0;
+      color: #444444;
+    }
+
+    .flag-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 6px;
+      color: #006699;
+      cursor: pointer;
+      user-select: none;
+      font-size: 12px;
+    }
+
+    .flag-toggle-btn:hover {
+      text-decoration: underline;
+    }
+
+    .flag-toggle-btn.flagged {
+      color: #c62828;
+      font-weight: 600;
+    }
+
+    /* RIGHT COLUMN: WARM CREAM QUESTION / INFO CONTENT BOX */
+    .main-question-column {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .cream-content-box {
+      background-color: var(--sas-cream-bg);
+      border: 1px solid var(--sas-cream-border);
+      padding: 20px 26px 26px 26px;
+      color: #333333;
+      min-height: 220px;
+    }
+
+    .cream-content-box h2,
+    .cream-content-box h3 {
+      margin-top: 0;
+      color: #222222;
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .cream-content-box p {
+      margin: 0 0 12px 0;
+    }
+
+    .cream-content-box ul {
+      margin: 0 0 16px 0;
+      padding-left: 28px;
+    }
+
+    .cream-content-box li {
+      margin-bottom: 6px;
+    }
+
+    /* IMAGE 2: OFFICIAL EXAM DETAILS SECTION CARD */
+    .exam-details-showcase {
+      background: #ffffff;
+      border: 1px solid #e2dec9;
+      border-radius: 4px;
+      padding: 24px 28px;
+      margin-top: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+
+    .exam-details-header {
+      font-size: 22px;
+      font-weight: 400;
+      color: #222222;
+      margin: 0 0 18px 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eeeeee;
+    }
+
+    .exam-details-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    @media (max-width: 820px) {
+      .exam-details-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .exam-details-bullets {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .exam-details-bullets li {
+      position: relative;
+      padding-left: 18px;
+      margin-bottom: 11px;
+      font-size: 14.5px;
+      color: #333333;
+    }
+
+    .exam-details-bullets li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: #0d6efd;
+      font-size: 18px;
+      font-weight: bold;
+      line-height: 1.2;
+    }
+
+    .exam-details-right-box {
+      text-align: center;
+      padding: 16px 12px;
+    }
+
+    .exam-details-right-box .exam-official-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #222222;
+      line-height: 1.35;
+      margin-bottom: 14px;
+    }
+
+    .exam-details-right-box .exam-official-id {
+      font-size: 19px;
+      font-weight: 400;
+      color: #333333;
+    }
+
+    /* EXAM CONFIGURATION PANEL ON INFO PAGE */
+    .simulator-config-panel {
+      background: #ffffff;
+      border: 1px solid #dcd5b8;
+      border-radius: 4px;
+      padding: 16px 22px;
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .config-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 13.5px;
+    }
+
+    .config-group label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      color: #333;
+    }
+
+    .config-group select {
+      padding: 4px 8px;
+      border: 1px solid #bbb;
+      border-radius: 3px;
+      font-size: 13px;
+    }
+
+    /* QUESTION BODY & SAS CODE BLOCK FORMATTING */
+    .q-prompt-container {
+      font-size: 14.5px;
+      color: #222222;
+      margin-bottom: 18px;
+    }
+
+    .q-prompt-line {
+      margin-bottom: 10px;
+    }
+
+    .sas-code-block {
+      background: #ffffff;
+      border: 1px solid #dfd8be;
+      border-left: 4px solid #006699;
+      padding: 12px 16px;
+      margin: 12px 0;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 13.5px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      color: #1b1b1b;
+      border-radius: 2px;
+    }
+
+    .q-images-wrap {
+      margin: 14px 0;
+    }
+
+    .q-images-wrap img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      background: #fff;
+      padding: 4px;
+    }
+
+    .answer-instruction-label {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .option-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background 0.12s;
+    }
+
+    .option-row:hover {
+      background: rgba(255, 255, 255, 0.65);
+      border-color: #e2d9b5;
+    }
+
+    .option-row.selected {
+      background: #ffffff;
+      border-color: #006699;
+    }
+
+    .option-row.review-correct-choice {
+      background: #e8f5e9;
+      border-color: #4caf50;
+    }
+
+    .option-row.review-wrong-choice {
+      background: #ffebee;
+      border-color: #ef5350;
+    }
+
+    .option-row input[type="radio"],
+    .option-row input[type="checkbox"] {
+      margin-top: 3px;
+      cursor: pointer;
+      transform: scale(1.1);
+    }
+
+    .option-text {
+      flex: 1;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+
+    .option-text.code-like {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 13.5px;
+    }
+
+    /* EXPLANATION / FEEDBACK BOX IN REVIEW OR PRACTICE MODE */
+    .feedback-panel {
+      margin-top: 20px;
+      background: #fffef7;
+      border: 1px solid #ebd28f;
+      border-left: 4px solid #006699;
+      padding: 14px 18px;
+      border-radius: 3px;
+    }
+
+    .feedback-panel.correct-banner {
+      border-left-color: #2e7d32;
+      background: #f4fbf5;
+      border-color: #c8e6c9;
+    }
+
+    .feedback-panel.wrong-banner {
+      border-left-color: #c62828;
+      background: #fff8f8;
+      border-color: #ffcdd2;
+    }
+
+    .feedback-title {
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .feedback-body {
+      white-space: pre-wrap;
+      font-size: 13.5px;
+      color: #2c2c2c;
+    }
+
+    /* BOTTOM NAVIGATION BUTTONS (Previous page / Next page) */
+    .bottom-nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 4px;
+    }
+
+    .btn-sas-outline {
+      background: #ffffff;
+      color: var(--sas-blue);
+      border: 1px solid var(--sas-blue);
+      border-radius: 3px;
+      padding: 7px 16px;
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-sas-outline:hover {
+      background: var(--sas-blue);
+      color: #ffffff;
+    }
+
+    .btn-sas-primary {
+      background: var(--sas-blue);
+      color: #ffffff;
+      border: 1px solid var(--sas-blue);
+      border-radius: 3px;
+      padding: 8px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-sas-primary:hover {
+      background: #004f77;
+    }
+
+    /* SUMMARY OF ATTEMPT & SCORE REPORT TABLES */
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #ffffff;
+      margin: 14px 0 20px 0;
+    }
+
+    .summary-table th,
+    .summary-table td {
+      border: 1px solid #e0e0e0;
+      padding: 9px 14px;
+      text-align: left;
+      font-size: 13.5px;
+    }
+
+    .summary-table th {
+      background: #f2f2f2;
+      font-weight: 600;
+    }
+
+    .summary-table tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    .score-report-banner {
+      background: #ffffff;
+      border: 2px solid #006699;
+      border-radius: 6px;
+      padding: 22px 26px;
+      margin-bottom: 20px;
+    }
+
+    .score-report-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .score-metric-box {
+      background: #f8f9fa;
+      border: 1px solid #e2e6ea;
+      border-radius: 4px;
+      padding: 12px 14px;
+      text-align: center;
+    }
+
+    .score-metric-box .metric-label {
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+    }
+
+    .score-metric-box .metric-val {
+      font-size: 22px;
+      font-weight: 700;
+      color: #032d60;
+      margin-top: 4px;
+    }
+
+    .status-badge-pass {
+      display: inline-block;
+      background: #2e7d32;
+      color: #fff;
+      padding: 4px 14px;
+      border-radius: 4px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .status-badge-fail {
+      display: inline-block;
+      background: #c62828;
+      color: #fff;
+      padding: 4px 14px;
+      border-radius: 4px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. WHITE TOP HEADER (SAS | LEARN) -->
+  <header class="top-white-bar">
+    <a href="#" class="sas-brand" onclick="goToPage(0); return false;">
+      <!-- Official SAS Script Logo SVG -->
+      <svg class="sas-logo-svg" viewBox="0 0 110 42" xmlns="http://www.w3.org/2000/svg">
+        <text x="0" y="33" fill="#006699" font-family="Georgia, 'Times New Roman', serif" font-weight="bold" font-style="italic" font-size="38">sas</text>
+      </svg>
+      <span class="sas-brand-divider">|</span>
+      <span class="sas-brand-learn">LEARN</span>
+    </a>
+    <div class="top-white-right">
+      <span>All SAS &#9662;</span>
+      <span title="Language / Region">
+        <svg class="globe-icon" viewBox="0 0 24 24" fill="none" stroke-width="1.8">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="2" y1="12" x2="22" y2="12"></line>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+        </svg>
+      </span>
+    </div>
+  </header>
+
+  <!-- 2. DARK NAVY NAVIGATION BAR -->
+  <nav class="navy-navbar">
+    <div class="navy-left">
+      <button class="btn-courses" type="button">Courses &#9662;</button>
+      <div class="search-box">
+        <input type="text" placeholder="What Do You Want to Learn?" id="searchFilterInput" oninput="onSearchQuestion(this.value)" />
+        <button type="button" title="Search">&#128269;</button>
+      </div>
+    </div>
+    <div class="navy-right">
+      <a href="#" onclick="goToPage(0); return false;">Overview</a>
+      <a href="#" onclick="return false;">Programs &#9662;</a>
+      <a href="#" onclick="return false;">Corporate Training</a>
+      <a href="#" onclick="return false;">My Training</a>
+      <a href="#" title="Cart" onclick="return false;">&#128722;</a>
+    </div>
+  </nav>
+
+  <!-- 3. USER PROFILE & LIVE EXAM TIMER SUBBAR -->
+  <div class="user-subbar">
+    <div class="subbar-left-tools">
+      <span class="badge-pill" id="bankStatusBadge">Bank: 0 unique questions</span>
+      <div class="timer-pill" id="examTimerDisplay" title="Official SAS A00-231 Time Limit: 135 minutes">
+        &#9201; Time Remaining: <span id="timerText">135:00</span>
+      </div>
+      <button class="btn-mini" type="button" onclick="triggerImportJson()" title="Load an updated analyticsexam_9586_questions.json file">
+        &#128194; Reload / Import JSON
+      </button>
+      <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="handleFileImport(event)" />
+      <button class="btn-mini" type="button" onclick="resetNewExamAttempt()" title="Start a fresh exam attempt">
+        &#8635; New Attempt
+      </button>
+    </div>
+    <div class="user-profile-right">
+      <span>Khánh Cao</span>
+      <span class="user-avatar-circle">&#128100;</span>
+    </div>
+  </div>
+
+  <!-- 4. THREE-COLUMN SAS LEARN QUIZ WORKSPACE -->
+  <main class="quiz-workspace">
+    <!-- Left Column: QUIZ NAVIGATION -->
+    <aside class="quiz-nav-card">
+      <h2 class="quiz-nav-title">QUIZ NAVIGATION</h2>
+      <div class="quiz-nav-grid" id="quizNavGrid"></div>
+      <div>
+        <a class="finish-attempt-link" id="finishAttemptLink" onclick="openFinishSummary(); return false;">Finish attempt ...</a>
+      </div>
+    </aside>
+
+    <!-- Middle Column: Question Status / Information Box -->
+    <section class="question-info-card" id="questionStatusCard">
+      <div class="q-info-heading">Information</div>
+    </section>
+
+    <!-- Right Column: Cream Content Box + Bottom Navigation -->
+    <section class="main-question-column">
+      <div class="cream-content-box" id="mainCreamBox"></div>
+      <div class="bottom-nav-row" id="bottomNavRow">
+        <div>
+          <button type="button" class="btn-sas-outline" id="btnPrevPage" onclick="prevPage()" style="visibility:hidden;">Previous page</button>
+        </div>
+        <div>
+          <button type="button" class="btn-sas-outline" id="btnNextPage" onclick="nextPage()">Next page</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- EMBEDDED QUESTION BANK (AUTO-SYNCED BY EXAM_HARVESTER_TOOL.PY) -->
+  <script id="embeddedQuestionBank" type="application/json">
+{
+  "exam_title": "(SAMPLE) SAS 9.4 Base Programming - Performance-Based Exam (A00-231)",
+  "source_url": "https://www.analyticsexam.com/node/9586/myresults",
+  "scanned_attempt_ids": [
+    "157993",
+    "157994",
+    "157995",
+    "157996",
+    "157997",
+    "157998",
+    "157999",
+    "158000",
+    "158001",
+    "158002",
+    "158003",
+    "158004",
+    "158005",
+    "158006",
+    "158007",
+    "158008",
+    "158009",
+    "158010",
+    "158011",
+    "158012",
+    "158013",
+    "158014",
+    "158015",
+    "158016",
+    "158017",
+    "158018",
+    "158019",
+    "158020",
+    "158021",
+    "158022",
+    "158023",
+    "158024",
+    "158025",
+    "158026",
+    "158027",
+    "158028",
+    "158029",
+    "158030",
+    "158031",
+    "158032",
+    "158033",
+    "158034",
+    "158035",
+    "158036",
+    "158037",
+    "158038",
+    "158039",
+    "158040",
+    "158041",
+    "158042",
+    "158043",
+    "158044",
+    "158045",
+    "158046",
+    "158047",
+    "158048",
+    "158049",
+    "158050",
+    "158051",
+    "158052",
+    "158053",
+    "158054",
+    "158055",
+    "158056",
+    "158057",
+    "158058",
+    "158059",
+    "158060",
+    "158061",
+    "158062",
+    "158063",
+    "158064",
+    "158065",
+    "158066",
+    "158067",
+    "158068",
+    "158069",
+    "158070",
+    "158071",
+    "158072",
+    "158073",
+    "158074",
+    "158075",
+    "158076",
+    "158077",
+    "158078",
+    "158079",
+    "158080",
+    "158081",
+    "158083",
+    "158084",
+    "158085",
+    "158086",
+    "158087",
+    "158088",
+    "158089",
+    "158090",
+    "158091",
+    "158092",
+    "158093",
+    "158094",
+    "158095",
+    "158096",
+    "158097",
+    "158098",
+    "158099",
+    "158100",
+    "158101",
+    "158102",
+    "158103",
+    "158104",
+    "158105",
+    "158106",
+    "158107",
+    "158108",
+    "158109",
+    "158110",
+    "158111",
+    "158112",
+    "158113",
+    "158114",
+    "158115",
+    "158116",
+    "158117",
+    "158118",
+    "158119",
+    "158120",
+    "158121",
+    "158122",
+    "158123",
+    "158124",
+    "158125",
+    "158126",
+    "158129",
+    "158130",
+    "158131",
+    "158132",
+    "158133",
+    "158134",
+    "158135",
+    "158136",
+    "158137",
+    "158138",
+    "158139",
+    "158140",
+    "158141",
+    "158142",
+    "158143",
+    "158144",
+    "158145",
+    "158146",
+    "158147",
+    "158148",
+    "158149",
+    "158150",
+    "158151",
+    "158152",
+    "158153",
+    "158154",
+    "158155",
+    "158156",
+    "158157",
+    "158158",
+    "158159",
+    "158160",
+    "158161",
+    "158162",
+    "158163",
+    "158164",
+    "158165",
+    "158166",
+    "158167",
+    "158168",
+    "158169",
+    "158170",
+    "158171",
+    "158172",
+    "158173",
+    "158174",
+    "158175",
+    "158176",
+    "158177",
+    "158178",
+    "158179",
+    "158180",
+    "158181"
+  ],
+  "total_attempts_scanned": 186,
+  "total_questions_raw": 1860,
+  "total_unique_questions": 30,
+  "questions": [
+    {
+      "id": 1,
+      "question_number_original": "Q1",
+      "question_text": "A PROC PRINT report was created with the following title:\nAsia Sports Vehicle Summary\nAfter the PROC PRINT report runs, a programmer would next like to produce a PROC FREQ report with the following title:\nAsia Sports Vehicle Summary\nDistribution by Make\nWhich statement(s) would produce the new report titles?",
+      "question_images": [],
+      "options": [
+        "title \"Asia Sports Vehicle Summary\";\nsubtitle \"Distribution by Make\";",
+        "title \"Asia Sports Vehicle Summary\";\ntitle2 \"Distribution by Make\";",
+        "title \"Distribution by Make\";",
+        "title \"Asia Sports Vehicle Summary\";\ntitle \"Distribution by Make\";"
+      ],
+      "correct_answer": "title \"Asia Sports Vehicle Summary\";\ntitle2 \"Distribution by Make\";",
+      "user_answer": "title \"Asia Sports Vehicle Summary\";\ntitle2 \"Distribution by Make\";",
+      "explanation": "[Correct - title \"Asia Sports Vehicle Summary\";\ntitle2 \"Distribution by Make\";]: TITLE sets the first title line and TITLE2 adds a second line beneath it without replacing the first, producing both required lines.\n\n[Incorrect - title \"Asia Sports Vehicle Summary\";\ntitle \"Distribution by Make\";]: A second TITLE statement (not TITLE2) replaces the first title rather than adding a second line beneath it, so this produces only 'Distribution by Make', not both lines.\n\n[Incorrect - title \"Asia Sports Vehicle Summary\";\nsubtitle \"Distribution by Make\";]: SUBTITLE is not a valid SAS titling statement — additional title lines are added with TITLE2, TITLE3, and so on.\n\n[Incorrect - title \"Distribution by Make\";]: A single TITLE statement replaces all previous titles, so this alone would drop the first title line 'Asia Sports Vehicle Summary' instead of adding a second line."
+    },
+    {
+      "id": 2,
+      "question_number_original": "Q2",
+      "question_text": "During DATA step execution, SAS automatically sets the automatic variable _ERROR_ to 1 for the current observation under certain conditions.\nWhich of the following, occurring while a DATA step is executing, set _ERROR_ to 1 for the observation being processed?\n(Choose two.)",
+      "question_images": [],
+      "options": [
+        "A misspelled statement keyword prevents the DATA step from compiling at all.",
+        "An automatic character-to-numeric conversion completes successfully for a value in the current observation.",
+        "An arithmetic expression attempts to divide by zero for the current observation.",
+        "SAS logs a routine NOTE reporting how many observations were read from the input data set.",
+        "Invalid character data is encountered while an INPUT statement tries to read it into a numeric variable."
+      ],
+      "correct_answer": "An arithmetic expression attempts to divide by zero for the current observation. | Invalid character data is encountered while an INPUT statement tries to read it into a numeric variable.",
+      "user_answer": "A misspelled statement keyword prevents the DATA step from compiling at all. | An arithmetic expression attempts to divide by zero for the current observation.",
+      "explanation": "[Correct - An arithmetic expression attempts to divide by zero for the current observation.]: Division by zero is a run-time arithmetic problem tied to that observation's actual values, and SAS sets _ERROR_ to 1 for it, the same way it does for invalid data.\n\n[Correct - Invalid character data is encountered while an INPUT statement tries to read it into a numeric variable.]: Invalid data encountered during execution — such as non-numeric text read into a numeric field — is a run-time condition that SAS flags by setting _ERROR_ to 1 for that observation.\n\n[Incorrect - A misspelled statement keyword prevents the DATA step from compiling at all.]: A compile-time syntax error prevents the DATA step from ever reaching execution for any observation, so there is no per-observation _ERROR_ value to set — the step simply does not run.\n\n[Incorrect - SAS logs a routine NOTE reporting how many observations were read from the input data set.]: A routine NOTE about observations read is purely informational reporting at the end of the step — it has nothing to do with _ERROR_ and doesn't affect it.\n\n[Incorrect - An automatic character-to-numeric conversion completes successfully for a value in the current observation.]: A successful automatic conversion is reported with a NOTE precisely because it completed without a problem; _ERROR_ is not set for it."
+    },
+    {
+      "id": 3,
+      "question_number_original": "Q3",
+      "question_text": "The following SAS program is submitted:\ndata WORK.NEW;\nyear=2011;\namount=5000;\ndo i=1 to 5;\nyear=year+1;\ndo qtr=1 to 4;\namount=amount*1.1;\nend;\nend;\nrun;\nproc print data=WORK.NEW noobs;\nrun;\nWhich output is correct?",
+      "question_images": [],
+      "options": [
+        "year amount i qtr\n2016 33637.50 5 5",
+        "year amount i qtr\n2016 33637.50 6 5",
+        "year amount i qtr\n2017 33637.50 6 5",
+        "year amount i qtr\n2016 33637.50 6 4"
+      ],
+      "correct_answer": "year amount i qtr\n2016 33637.50 6 5",
+      "user_answer": "year amount i qtr\n2016 33637.50 5 5",
+      "explanation": "[Correct - year amount i qtr\n2016 33637.50 6 5]: With no explicit OUTPUT statement, the single implicit output at the bottom of the DATA step occurs only after both DO loops finish. Year ends at 2011+5=2016; the outer index i ends at 6 (the value that fails the 1-to-5 test); the inner index qtr ends at 5 for the same reason; and amount = 5000*(1.1)^20 ≈ 33637.50.\n\n[Incorrect - year amount i qtr\n2016 33637.50 5 5]: The outer loop's index i is not left at its last executed value (5) — a DO loop's index is incremented one further time to 6 before the exit test fails, so i ends at 6.\n\n[Incorrect - year amount i qtr\n2016 33637.50 6 4]: The same end-of-loop increment rule applies to the inner index qtr — it ends at 5, not 4, since it is bumped past its last executed value of 4 before the loop condition fails.\n\n[Incorrect - year amount i qtr\n2017 33637.50 6 5]: Year is incremented once per outer-loop iteration (5 times from 2011), so its final value is 2016, not 2017."
+    },
+    {
+      "id": 4,
+      "question_number_original": "Q4",
+      "question_text": "An analyst wants to keep only warehouse observations where a newly computed variable, days_in_stock, exceeds 30. Two candidate DATA steps are shown:\ndata logistics.aged; set logistics.stock; where days_in_stock > 30; days_in_stock = today() - received_date; run;\ndata logistics.aged; set logistics.stock; days_in_stock = today() - received_date; if days_in_stock > 30; run;\nWhich two statements are true about these two approaches?\n(Choose two.)",
+      "question_images": [],
+      "options": [
+        "The second DATA step (using subsetting IF) filters correctly, since IF runs after days_in_stock is computed.",
+        "The first DATA step (using WHERE) fails to filter as intended, since days_in_stock doesn't exist yet when WHERE is evaluated.",
+        "WHERE and subsetting IF are fully interchangeable in every DATA step, always producing identical results.",
+        "WHERE always executes after all assignment statements in the DATA step have run, ensuring any computed variable is available to it.",
+        "Subsetting IF can filter directly on the raw input data set before SAS reads any observations into the program data vector, exactly like WHERE."
+      ],
+      "correct_answer": "The second DATA step (using subsetting IF) filters correctly, since IF runs after days_in_stock is computed. | The first DATA step (using WHERE) fails to filter as intended, since days_in_stock doesn't exist yet when WHERE is evaluated.",
+      "user_answer": "WHERE always executes after all assignment statements in the DATA step have run, ensuring any computed variable is available to it. | Subsetting IF can filter directly on the raw input data set before SAS reads any observations into the program data vector, exactly like WHERE.",
+      "explanation": "[Correct - The second DATA step (using subsetting IF) filters correctly, since IF runs after days_in_stock is computed.]: Subsetting IF evaluates after the DATA step has computed days_in_stock in the program data vector for the current observation, so it correctly filters on the calculated value.\n\n[Correct - The first DATA step (using WHERE) fails to filter as intended, since days_in_stock doesn't exist yet when WHERE is evaluated.]: WHERE is applied at the point SAS reads observations from the source, before the days_in_stock assignment even runs — since logistics.stock has no such variable at that point, this WHERE clause cannot filter on it as intended.\n\n[Incorrect - WHERE always executes after all assignment statements in the DATA step have run, ensuring any computed variable is available to it.]: WHERE is evaluated as records are read from the source, before the DATA step's own assignment statements execute for that observation — not after.\n\n[Incorrect - Subsetting IF can filter directly on the raw input data set before SAS reads any observations into the program data vector, exactly like WHERE.]: The opposite is true: WHERE operates at the data-source read stage; subsetting IF only evaluates after an observation has already entered the program data vector and any assignments have run.\n\n[Incorrect - WHERE and subsetting IF are fully interchangeable in every DATA step, always producing identical results.]: The two are not interchangeable in every case — as this example shows, WHERE cannot see a variable computed later in the DATA step, while subsetting IF can."
+    },
+    {
+      "id": 5,
+      "question_number_original": "Q5",
+      "question_text": "Given the following data set:\nsubjid ae_txt1 ae_sev1 ae_txt2 ae_sev2 ae_txt3 ae_sev3\n1001 FEVER MILD HEADACHE MODERATE NAUSEA MILD\n1002 GOUT SEVERE FEVER MODERATE HEADACHE SEVERE\nA PROC TRANSPOSE step produced the following long-format data set from it:\nsubjid COL1\n1001 FEVER\n1001 MILD\n1001 HEADACHE\n1001 MODERATE\n1001 NAUSEA\n1001 MILD\n1002 GOUT\n1002 SEVERE\n1002 FEVER\n1002 MODERATE\n1002 HEADACHE\n1002 SEVERE\nWhich type of statement in the PROC TRANSPOSE step lists the ae_txt/ae_sev variables so they are stacked, in this order, into the single COL1 column?",
+      "question_images": [],
+      "options": [
+        "ID",
+        "IDLABEL",
+        "CLASS",
+        "VAR"
+      ],
+      "correct_answer": "VAR",
+      "user_answer": "VAR",
+      "explanation": "[Correct - VAR]: The VAR statement lists the analysis variables (ae_txt1, ae_sev1, ae_txt2, ...) that PROC TRANSPOSE stacks, in the order listed, into the single COL1 column for each subjid.\n\n[Incorrect - IDLABEL]: IDLABEL only supplies a label for the ID variable's values; it doesn't select which variables are transposed.\n\n[Incorrect - ID]: ID supplies values used to name the transposed columns, rather than listing which variables get stacked row-wise.\n\n[Incorrect - CLASS]: CLASS in PROC TRANSPOSE groups output by an additional classification variable; it isn't what selects the variables to transpose into COL1."
+    },
+    {
+      "id": 6,
+      "question_number_original": "Q6",
+      "question_text": "Assume that Work.Ds1 and Work.Ds2 exist and the following SAS program is submitted:\nods pdf file='results.pdf';\nproc print data=work.ds1;\nrun;\nproc freq data=work.ds1;\nproc freq data=work.ds2;\nrun;\nods pdf close;\nHow many PDF files are created?",
+      "question_images": [],
+      "options": [
+        "3 PDF files -- one per procedure request",
+        "2 PDF files -- one for the PRINT output and one for the FREQ output",
+        "1 PDF file with all the output combined",
+        "2 PDF files -- one file for each data set used"
+      ],
+      "correct_answer": "1 PDF file with all the output combined",
+      "user_answer": "1 PDF file with all the output combined",
+      "explanation": "[Correct - 1 PDF file with all the output combined]: The ODS PDF destination stays open and directed to results.pdf until ods pdf close; is reached, so every procedure's output executed in between — PROC PRINT and both PROC FREQ steps — is appended into that single PDF file.\n\n[Incorrect - 3 PDF files -- one per procedure request]: A new PDF file is created only when a new ods pdf file= statement executes; running three procedures does not create three files.\n\n[Incorrect - 2 PDF files -- one for the PRINT output and one for the FREQ output]: ODS PDF does not split output by procedure type into separate files — all output between the OPEN and CLOSE goes to the one destination file.\n\n[Incorrect - 2 PDF files -- one file for each data set used]: ODS PDF does not open a new file per data set referenced — only ods pdf file=/ods pdf close; control how many files are produced, and there is only one open/close pair here."
+    },
+    {
+      "id": 7,
+      "question_number_original": "Q7",
+      "question_text": "A farm-management DATA step computes yield per acre:\ndata farm.yield_summary; set farm.yield_raw; yield_per_acre = total_yield / acres; run;\nSome observations have a missing value for acres. What happens for those observations, and what appears in the log?",
+      "question_images": [],
+      "options": [
+        "SAS automatically drops any observation with a missing value for acres from the final output data set, without logging any message at all.",
+        "SAS computes yield_per_acre as missing for that observation, logs a 'Missing values were generated' NOTE, and keeps processing the rest.",
+        "The DATA step terminates immediately upon encountering the first observation with a missing acres value, aborting the entire run.",
+        "SAS treats the missing acres value as though it equaled 1, allowing the division to complete without producing any missing result."
+      ],
+      "correct_answer": "SAS computes yield_per_acre as missing for that observation, logs a 'Missing values were generated' NOTE, and keeps processing the rest.",
+      "user_answer": "SAS treats the missing acres value as though it equaled 1, allowing the division to complete without producing any missing result.",
+      "explanation": "[Correct - SAS computes yield_per_acre as missing for that observation, logs a 'Missing values were generated' NOTE, and keeps processing the rest.]: Arithmetic with a missing operand always yields a missing result; SAS reports this with a non-fatal 'Missing values were generated' NOTE and keeps executing the DATA step.\n\n[Incorrect - SAS treats the missing acres value as though it equaled 1, allowing the division to complete without producing any missing result.]: SAS never substitutes 1 (or any other value) for a missing operand in arithmetic — missing propagates through the calculation as missing, it is not silently replaced.\n\n[Incorrect - SAS automatically drops any observation with a missing value for acres from the final output data set, without logging any message at all.]: A missing arithmetic result doesn't automatically drop the observation; it is still written to the output data set with yield_per_acre as missing unless explicit logic excludes it, and the NOTE is written regardless.\n\n[Incorrect - The DATA step terminates immediately upon encountering the first observation with a missing acres value, aborting the entire run.]: Missing values in an arithmetic expression don't stop DATA step execution; this is a recoverable NOTE-level condition, not a fatal one."
+    },
+    {
+      "id": 8,
+      "question_number_original": "Q8",
+      "question_text": "An HR analyst builds a mailing extract from the full HR master, wanting only four specific columns and a friendlier name for the zip code column.\ndata mailing_extract; set hr_master(keep=emp_id first_name last_name mail_zip rename=(mail_zip=zip)); run;\nWhat do the KEEP= and RENAME= data set options together accomplish here?",
+      "question_images": [],
+      "options": [
+        "Only the four listed variables are read in, with mail_zip renamed to zip as it's read.",
+        "RENAME= creates a duplicate variable, so mailing_extract ends up with both mail_zip and zip",
+        "KEEP= only affects what is written to mailing_extract, while every variable in hr_master is still read into the program data vector each iteration",
+        "KEEP= and RENAME= cannot be combined in the same data set option list and would cause a syntax error"
+      ],
+      "correct_answer": "Only the four listed variables are read in, with mail_zip renamed to zip as it's read.",
+      "user_answer": "Only the four listed variables are read in, with mail_zip renamed to zip as it's read.",
+      "explanation": "[Correct - Only the four listed variables are read in, with mail_zip renamed to zip as it's read.]: Data set options attached directly to hr_master apply at the point the data set is read: KEEP= limits which variables are brought into the program data vector in the first place, and RENAME= relabels mail_zip to zip during that same read, ahead of any DATA step statements.\n\n[Incorrect - KEEP= only affects what is written to mailing_extract, while every variable in hr_master is still read into the program data vector each iteration]: That describes a KEEP= statement applied to the output data set, not a KEEP= data set option on the input — attached to hr_master as shown, it restricts which variables are read in at all.\n\n[Incorrect - KEEP= and RENAME= cannot be combined in the same data set option list and would cause a syntax error]: Multiple data set options, separated by spaces, are routinely combined in one parenthesized list exactly as shown — this is standard, valid syntax, not an error.\n\n[Incorrect - RENAME= creates a duplicate variable, so mailing_extract ends up with both mail_zip and zip]: RENAME= relabels the variable rather than duplicating it — mailing_extract ends up with only zip, not both names."
+    },
+    {
+      "id": 9,
+      "question_number_original": "Q9",
+      "question_text": "Given the following SAS data set WORK.CLASS (columns Name, Gender, Age):\n- Anna, F, 23\n- Ben, M, 25\n- Bob, M, 21\n- Brian, M, 27\n- Edward, M, 26\n- Emma, F, 32\n- Joe, M, 34\n- Sam, F, 32\n- Tom, M, 24\nThe following program is submitted:\ndata WORK.MALES WORK.FEMALES(drop=age); set WORK.CLASS; drop gender; if Gender=\"M\" then output WORK.MALES; else if Gender=\"F\" then output WORK.FEMALES; run;\nHow many variables are in the data set WORK.MALES?",
+      "question_images": [],
+      "options": [
+        "1",
+        "3",
+        "The program does not execute due to a syntax error.",
+        "2"
+      ],
+      "correct_answer": "2",
+      "user_answer": "The program does not execute due to a syntax error.",
+      "explanation": "[Correct - 2]: The DROP gender statement applies to every data set created in this DATA step, removing Gender from WORK.MALES; the (drop=age) option only applies to WORK.FEMALES. So WORK.MALES retains Name and Age — 2 variables.\n\n[Incorrect - The program does not execute due to a syntax error.]: The program is syntactically valid — a DATA statement can name multiple output data sets with per-data-set options like (drop=age), and the IF/ELSE IF logic correctly routes rows; it runs without a syntax error.\n\n[Incorrect - 1]: The global DROP gender statement removes only Gender from both output data sets — Name and Age both remain in WORK.MALES, giving 2 variables, not 1.\n\n[Incorrect - 3]: Gender is dropped from WORK.MALES by the global DROP statement in the DATA step, so WORK.MALES has only 2 variables (Name, Age), not all 3 original variables."
+    },
+    {
+      "id": 10,
+      "question_number_original": "Q10",
+      "question_text": "The variable Name in the data set Employee has a $CHAR10. format. The variable Name in the data set Sales has a $CHAR15. format.\nThe following SAS program is submitted:\ndata both; merge employee sales; by name; run;\nWhat is the format for the variable Name in the data set Both?",
+      "question_images": [],
+      "options": [
+        "$CHAR",
+        "$CHAR10",
+        "$CHAR15",
+        "no format defined"
+      ],
+      "correct_answer": "$CHAR10",
+      "user_answer": "$CHAR15",
+      "explanation": "[Correct - $CHAR10]: When MERGE encounters the same variable with conflicting attributes across data sets, the attributes from the first data set listed (Employee) take precedence, so Name keeps its $CHAR10. format.\n\n[Incorrect - $CHAR15]: $CHAR15. is Sales's format, but Employee is listed first in the MERGE statement, so Employee's $CHAR10. format is the one retained.\n\n[Incorrect - no format defined]: Both source data sets define an explicit format for Name, and MERGE carries forward the format from the first data set in which the variable is encountered.\n\n[Incorrect - $CHAR]: $CHAR alone (without a width) is not a valid captured format here; the full $CHAR10. format from Employee, the first-listed data set, is what carries over."
+    },
+    {
+      "id": 11,
+      "question_number_original": "Q1",
+      "question_text": "A coffee shop's raw sales extract stores the column unit_price as character data (for example, the text value \"3.50\") because it was imported from a point-of-sale export. A programmer submits the following DATA step:\ndata work.receipts;\nset work.posraw;\ntotal_due = qty * unit_price;\nrun;\nThe SAS log shows: NOTE: Character values have been converted to numeric values at the places given by: (Line):(Column). No ERROR or WARNING appears anywhere else in the log.\nWhat does this NOTE mean for the DATA step?",
+      "question_images": [],
+      "options": [
+        "SAS silently dropped qty from the calculation and substituted a missing value.",
+        "SAS renamed unit_price to a brand-new temporary numeric variable, leaving the original character column completely unused in the calculation.",
+        "SAS converted unit_price to numeric automatically and completed the calculation; the NOTE is only informational.",
+        "The DATA step failed to compile, so work.receipts was never created."
+      ],
+      "correct_answer": "SAS converted unit_price to numeric automatically and completed the calculation; the NOTE is only informational.",
+      "user_answer": "SAS converted unit_price to numeric automatically and completed the calculation; the NOTE is only informational.",
+      "explanation": "[Correct - SAS converted unit_price to numeric automatically and completed the calculation; the NOTE is only informational.]: SAS performs the conversion automatically at execution and logs it as a NOTE because the step still runs successfully; it flags a design issue worth checking without halting processing.\n\n[Incorrect - SAS silently dropped qty from the calculation and substituted a missing value.]: qty is untouched by this NOTE — the conversion applies to unit_price, and the multiplication still uses qty's actual value.\n\n[Incorrect - SAS renamed unit_price to a brand-new temporary numeric variable, leaving the original character column completely unused in the calculation.]: No renaming occurs — SAS converts the value in place each time it is needed for the expression; it does not create or substitute a separate variable.\n\n[Incorrect - The DATA step failed to compile, so work.receipts was never created.]: An automatic character-to-numeric conversion is reported with a NOTE, not an ERROR; the step compiles and executes, and work.receipts is created."
+    },
+    {
+      "id": 12,
+      "question_number_original": "Q2",
+      "question_text": "Two files list the same 200 employees in identical row order: one with base salary, one with a bonus percentage. A programmer wants a single file with both figures per employee.\ndata payroll_full; merge base_salary bonus_pct; run;\nSince there is no BY statement, how does SAS combine observations from base_salary and bonus_pct here?",
+      "question_images": [],
+      "options": [
+        "The step fails immediately because MERGE always requires a BY statement to run",
+        "SAS automatically matches rows on any common variable names between the two data sets, ignoring row order",
+        "SAS produces every possible combination of a base_salary row with a bonus_pct row (a Cartesian product)",
+        "SAS pairs observations purely by position — obs 1 with obs 1, obs 2 with obs 2, and so on."
+      ],
+      "correct_answer": "SAS pairs observations purely by position — obs 1 with obs 1, obs 2 with obs 2, and so on.",
+      "user_answer": "SAS produces every possible combination of a base_salary row with a bonus_pct row (a Cartesian product)",
+      "explanation": "[Correct - SAS pairs observations purely by position — obs 1 with obs 1, obs 2 with obs 2, and so on.]: A MERGE with no BY statement is a one-to-one merge: SAS combines observations purely by their position in each data set, with no key-based matching performed at all.\n\n[Incorrect - SAS produces every possible combination of a base_salary row with a bonus_pct row (a Cartesian product)]: A full cross of every row against every other row is not how MERGE behaves — MERGE always combines at most one observation from each listed data set per iteration.\n\n[Incorrect - The step fails immediately because MERGE always requires a BY statement to run]: A BY statement is optional on MERGE — omitting it simply switches the behavior to a positional one-to-one merge instead of causing an error.\n\n[Incorrect - SAS automatically matches rows on any common variable names between the two data sets, ignoring row order]: Automatic matching on common variable values only happens with a BY statement (a match-merge) — without one, MERGE has no key to match on and simply follows row position."
+    },
+    {
+      "id": 13,
+      "question_number_original": "Q3",
+      "question_text": "A telecom billing DATA step computes:\ndata telecom.contracts; set telecom.contract_raw; months_elapsed = intck('month', contract_start, contract_end); run;\nWhat does intck('month', contract_start, contract_end) calculate?",
+      "question_images": [],
+      "options": [
+        "The number of month-boundary crossings between contract_start and contract_end, effectively how many calendar months apart the two dates are.",
+        "A value of 1 if the two dates fall in the same calendar year, and 0 otherwise.",
+        "The exact number of calendar days that separate contract_start from contract_end, counted one at a time regardless of month boundaries crossed.",
+        "A brand-new date value that falls exactly one calendar month after contract_start, computed directly by the function itself."
+      ],
+      "correct_answer": "The number of month-boundary crossings between contract_start and contract_end, effectively how many calendar months apart the two dates are.",
+      "user_answer": "The number of month-boundary crossings between contract_start and contract_end, effectively how many calendar months apart the two dates are.",
+      "explanation": "[Correct - The number of month-boundary crossings between contract_start and contract_end, effectively how many calendar months apart the two dates are.]: INTCK counts how many times the named interval boundary (here, the start of a calendar month) is crossed between the two dates, regardless of the exact day within each month.\n\n[Incorrect - A value of 1 if the two dates fall in the same calendar year, and 0 otherwise.]: INTCK's result is not a same-year flag; it returns a count of month boundaries crossed, which can be any integer, not just 0 or 1.\n\n[Incorrect - A brand-new date value that falls exactly one calendar month after contract_start, computed directly by the function itself.]: Computing a new shifted date is what INTNX does, not INTCK; INTCK only returns a count of boundaries crossed, never a date value.\n\n[Incorrect - The exact number of calendar days that separate contract_start from contract_end, counted one at a time regardless of month boundaries crossed.]: INTCK counts interval boundaries — here, calendar months — not raw elapsed days; a plain subtraction of the two date values would give the day count instead."
+    },
+    {
+      "id": 14,
+      "question_number_original": "Q7",
+      "question_text": "The following SAS program is submitted:\nproc means data=work.schools median;\n<insert statement(s) here>\nrun;\nWork.Schools has two numeric variables, and the following PROC MEANS report is produced:\nWhich statement completes the program and creates this report?",
+      "question_images": [
+        "https://www.analyticsexam.com/files/sas-exam.com/files/user22601/A00-231_Off.s_39.png"
+      ],
+      "options": [
+        "class location;",
+        "group by location;",
+        "by location;",
+        "by location; id location;"
+      ],
+      "correct_answer": "class location;",
+      "user_answer": "group by location;",
+      "explanation": "[Correct - class location;]: The report breaks the median out by location (school1, school2) and shows an N Obs column alongside each Variable/Median pair -- the characteristic layout PROC MEANS produces when location is named on a CLASS statement, which does not require the input data to be pre-sorted.\n\n[Incorrect - group by location;]: GROUP BY is not valid PROC MEANS syntax -- grouping in PROC MEANS is done with the CLASS or BY statement.\n\n[Incorrect - by location;]: A BY statement would require WORK.SCHOOLS to be sorted by location first and produces a separate report for each BY group, without the CLASS-style combined N Obs/Variable layout shown here.\n\n[Incorrect - by location; id location;]: ID is a PROC PRINT/REPORT statement, not a valid PROC MEANS statement, and BY alone would still require presorted data -- neither matches this CLASS-based report layout."
+    },
+    {
+      "id": 15,
+      "question_number_original": "Q9",
+      "question_text": "A fundraising DATA step maintains a running total across daily gift records:\ndata charity.running_total; set charity.daily_gifts; retain campaign_total 0; campaign_total + gift_amount; run;\nWhat does the statement campaign_total + gift_amount; (the SUM statement form) do?",
+      "question_images": [],
+      "options": [
+        "It adds gift_amount to campaign_total's retained value, treating a missing gift_amount as 0, without resetting each iteration.",
+        "It requires an explicit RETAIN statement to behave any differently from a plain assignment written as campaign_total = campaign_total + gift_amount;.",
+        "It replaces campaign_total with gift_amount each time the step runs, discarding whatever value had previously accumulated there.",
+        "It compares campaign_total against gift_amount directly and assigns whichever of the two values happens to be larger to campaign_total."
+      ],
+      "correct_answer": "It adds gift_amount to campaign_total's retained value, treating a missing gift_amount as 0, without resetting each iteration.",
+      "user_answer": "It requires an explicit RETAIN statement to behave any differently from a plain assignment written as campaign_total = campaign_total + gift_amount;.",
+      "explanation": "[Correct - It adds gift_amount to campaign_total's retained value, treating a missing gift_amount as 0, without resetting each iteration.]: The compound SUM statement form automatically retains its accumulator across observations and treats a missing addend as 0, so campaign_total accumulates gift_amount correctly without needing separate missing-value handling.\n\n[Incorrect - It requires an explicit RETAIN statement to behave any differently from a plain assignment written as campaign_total = campaign_total + gift_amount;.]: This is exactly backwards — the compound + form's distinguishing feature is that it auto-retains the accumulator and zeroes out missing addends on its own, unlike a plain assignment, which would need an explicit RETAIN and separate missing-value handling to behave the same way.\n\n[Incorrect - It replaces campaign_total with gift_amount each time the step runs, discarding whatever value had previously accumulated there.]: Because campaign_total is implicitly retained by this SUM statement form, its prior value carries forward and gift_amount is added to it, not overwritten by it.\n\n[Incorrect - It compares campaign_total against gift_amount directly and assigns whichever of the two values happens to be larger to campaign_total.]: The SUM statement form always adds the two values together; it never compares them to pick a maximum — that would require a function such as MAX."
+    },
+    {
+      "id": 16,
+      "question_number_original": "Q10",
+      "question_text": "Two regional customer data sets are concatenated:\ndata combined.customers; set region_east.customers region_west.customers; run;\nThe log reports ERROR: Variable customer_id has been defined as both character and numeric. What causes this, and what must be done to fix it?",
+      "question_images": [],
+      "options": [
+        "The two source data sets store customer_id with different types (character vs numeric); one must be converted before combining them with SET.",
+        "The BY statement is missing from the SET statement, so SAS has no way to align observations between the two data sets correctly.",
+        "The two data sets simply have a different number of observations, which SAS reports here as an underlying type conflict error.",
+        "One of the two source data sets is missing the customer_id variable entirely, so SAS cannot reconcile or align any of its attributes between the two inputs."
+      ],
+      "correct_answer": "The two source data sets store customer_id with different types (character vs numeric); one must be converted before combining them with SET.",
+      "user_answer": "The BY statement is missing from the SET statement, so SAS has no way to align observations between the two data sets correctly.",
+      "explanation": "[Correct - The two source data sets store customer_id with different types (character vs numeric); one must be converted before combining them with SET.]: SAS requires a single, consistent type for a same-named variable across data sets being concatenated with SET; a character-vs-numeric mismatch on customer_id must be resolved (e.g. via an explicit conversion) before combining them.\n\n[Incorrect - The BY statement is missing from the SET statement, so SAS has no way to align observations between the two data sets correctly.]: A plain concatenating SET does not require a BY statement at all — BY is only needed for interleaving. Its absence would not produce this type-conflict error.\n\n[Incorrect - The two data sets simply have a different number of observations, which SAS reports here as an underlying type conflict error.]: An unequal number of observations across concatenated data sets is entirely normal and produces no such ERROR; row counts are unrelated to a variable's type.\n\n[Incorrect - One of the two source data sets is missing the customer_id variable entirely, so SAS cannot reconcile or align any of its attributes between the two inputs.]: If the variable were missing from one data set, SAS would simply carry it over from the data set that has it, not raise a type-conflict ERROR — that message specifically means the type is inconsistent, not absent."
+    },
+    {
+      "id": 17,
+      "question_number_original": "Q2",
+      "question_text": "A company keeps separate SAS data sets for three regional sales offices, each with the same variable structure, and wants one combined data set:\ndata work.allregions; set work.north work.south work.east; run;\nWhat is the result of this DATA step?",
+      "question_images": [],
+      "options": [
+        "work.allregions contains north's observations, then south's, then east's, stacked in listed order.",
+        "work.allregions contains only the observations that appear in all three input data sets, as if an intersection had been taken.",
+        "work.allregions contains one merged observation per matching key, combining variables from north, south, and east side by side.",
+        "SAS only reads work.east, since the last data set named in a SET statement overrides the earlier ones listed."
+      ],
+      "correct_answer": "work.allregions contains north's observations, then south's, then east's, stacked in listed order.",
+      "user_answer": "work.allregions contains only the observations that appear in all three input data sets, as if an intersection had been taken.",
+      "explanation": "[Correct - work.allregions contains north's observations, then south's, then east's, stacked in listed order.]: Listing more than one data set on a SET statement concatenates them in the order given, reading every observation of the first data set, then every observation of the next, and so on.\n\n[Incorrect - work.allregions contains only the observations that appear in all three input data sets, as if an intersection had been taken.]: A SET statement listing multiple data sets concatenates them; it does not compute an intersection of matching rows across the three sets.\n\n[Incorrect - SAS only reads work.east, since the last data set named in a SET statement overrides the earlier ones listed.]: SET does not discard earlier data sets in favor of the last one listed; all three are read and stacked in the order they appear.\n\n[Incorrect - work.allregions contains one merged observation per matching key, combining variables from north, south, and east side by side.]: Side-by-side variable combining by a matching key is the behavior of a MERGE with a BY statement, not a plain SET statement listing several data sets."
+    },
+    {
+      "id": 18,
+      "question_number_original": "Q3",
+      "question_text": "The SAS log reports three general categories of messages while a program runs. Which category indicates a condition that did not prevent the step from completing, but flags something the programmer should probably investigate — as opposed to a purely routine status message?",
+      "question_images": [],
+      "options": [
+        "None of these — SAS does not distinguish between message severities.",
+        "WARNING",
+        "ERROR",
+        "NOTE"
+      ],
+      "correct_answer": "WARNING",
+      "user_answer": "None of these — SAS does not distinguish between message severities.",
+      "explanation": "[Correct - WARNING]: A WARNING reports a condition SAS could work around and still complete the step, such as an automatic type conversion or an uninitialized variable — but it's exactly the kind of message a programmer should look into, since it often points to an unintended data or code issue.\n\n[Incorrect - None of these — SAS does not distinguish between message severities.]: SAS log messages are explicitly categorized into ERROR, WARNING, and NOTE levels, each with a distinct meaning and severity.\n\n[Incorrect - NOTE]: A NOTE is SAS's routine, informational message level — it reports normal status, such as observations read or a data set's shape, and does not itself signal a condition worth investigating.\n\n[Incorrect - ERROR]: An ERROR indicates a more serious problem that typically prevents a statement, step, or portions of the intended processing from completing correctly — it goes beyond something that merely warrants a look; it's a genuine failure."
+    },
+    {
+      "id": 19,
+      "question_number_original": "Q4",
+      "question_text": "To help diagnose a data-quality issue, a programmer adds the following line inside a DATA step that processes inventory counts:\nif units_on_hand < 0 then putlog \"WARNING: negative units_on_hand for item=\" item_id units_on_hand=;\nFor observations where units_on_hand is negative, what happens as a direct result of this statement?",
+      "question_images": [],
+      "options": [
+        "The DATA step stops processing entirely as soon as any negative value is encountered in the data step.",
+        "A diagnostic message naming item_id and its value is written to the log; no data is changed.",
+        "The observation is excluded from the output data set.",
+        "SAS automatically resets units_on_hand to 0 for that observation."
+      ],
+      "correct_answer": "A diagnostic message naming item_id and its value is written to the log; no data is changed.",
+      "user_answer": "A diagnostic message naming item_id and its value is written to the log; no data is changed.",
+      "explanation": "[Correct - A diagnostic message naming item_id and its value is written to the log; no data is changed.]: PUTLOG works like PUT but directs its output to the log rather than a data step's normal destination, making it a common way to surface a custom diagnostic message without changing any data or stopping execution.\n\n[Incorrect - SAS automatically resets units_on_hand to 0 for that observation.]: PUTLOG is purely diagnostic; it does not modify any variable's value. units_on_hand remains exactly as read.\n\n[Incorrect - The observation is excluded from the output data set.]: Writing a log message with PUTLOG does not subset or exclude observations from the output — an explicit OUTPUT or subsetting IF/WHERE would be needed for that, and neither is present here.\n\n[Incorrect - The DATA step stops processing entirely as soon as any negative value is encountered in the data step.]: PUTLOG only writes a message to the log — it has no effect on whether the DATA step continues processing subsequent statements or observations."
+    },
+    {
+      "id": 20,
+      "question_number_original": "Q7",
+      "question_text": "Assume that Sasuser.One does not exist and that the following SAS program is submitted at the beginning of a new SAS session.\ndata sasuser.one;\nx=1;\ny=27;\noutput one;\nrun;\nWhat happens when this program runs?",
+      "question_images": [],
+      "options": [
+        "The data set Sasuser.One is created with 2 variables and 3 observations.",
+        "The data set Sasuser.One is created with 2 variables and 0 observations.",
+        "The data set Work.One is created with 2 variables and 1 observation.",
+        "The data set Sasuser.One is created with 2 variables and 1 observation."
+      ],
+      "correct_answer": "The data set Sasuser.One is created with 2 variables and 0 observations.",
+      "user_answer": "The data set Sasuser.One is created with 2 variables and 3 observations.",
+      "explanation": "[Correct - The data set Sasuser.One is created with 2 variables and 0 observations.]: SAS determines the 2 variables (x and y) at compile time, but OUTPUT one; doesn't match the declared data set name sasuser.one, causing an error that stops the step from writing any observations — leaving Sasuser.One with 2 variables and 0 observations.\n\n[Incorrect - The data set Sasuser.One is created with 2 variables and 3 observations.]: The OUTPUT statement names 'one', which doesn't match the data set sasuser.one listed on the DATA statement, so this causes an error rather than writing 3 observations.\n\n[Incorrect - The data set Work.One is created with 2 variables and 1 observation.]: The DATA statement explicitly names sasuser.one, not work.one, so no Work-library version of this data set is created.\n\n[Incorrect - The data set Sasuser.One is created with 2 variables and 1 observation.]: The mismatched OUTPUT statement causes an error before an observation is successfully written, so the data set ends up with 0 observations, not 1."
+    },
+    {
+      "id": 21,
+      "question_number_original": "Q9",
+      "question_text": "A hotel wants to see how room bookings break down by room type and season:\nproc freq data=work.bookings; tables roomtype*season; run;\nWhich of the following statements about this default two-way TABLES output are true?\n(Choose two.)",
+      "question_images": [],
+      "options": [
+        "A chi-square test of association between roomtype and season is automatically calculated and printed with no additional option requested.",
+        "Listing roomtype*season builds a separate one-way table for each distinct roomtype value instead of a single combined two-way table.",
+        "Observations with a missing roomtype or season value are excluded from the table by default, unless the MISSING option is added.",
+        "The TABLES statement automatically arranges roomtype and season into descending frequency order before building the crosstab.",
+        "The default cell shows the frequency count plus row, column, and overall percentages for each combination."
+      ],
+      "correct_answer": "Observations with a missing roomtype or season value are excluded from the table by default, unless the MISSING option is added. | The default cell shows the frequency count plus row, column, and overall percentages for each combination.",
+      "user_answer": "A chi-square test of association between roomtype and season is automatically calculated and printed with no additional option requested. | The TABLES statement automatically arranges roomtype and season into descending frequency order before building the crosstab.",
+      "explanation": "[Correct - Observations with a missing roomtype or season value are excluded from the table by default, unless the MISSING option is added.]: PROC FREQ excludes observations with a missing value on either crossed variable from the default table; the MISSING option must be added to include missing values as a valid category.\n\n[Correct - The default cell shows the frequency count plus row, column, and overall percentages for each combination.]: PROC FREQ's default two-way cell layout includes the raw frequency along with row percentage, column percentage, and percentage of the overall total, for every combination of the two variables.\n\n[Incorrect - A chi-square test of association between roomtype and season is automatically calculated and printed with no additional option requested.]: A chi-square test is not produced by a plain TABLES statement; it requires explicitly adding the CHISQ option to the TABLES statement.\n\n[Incorrect - The TABLES statement automatically arranges roomtype and season into descending frequency order before building the crosstab.]: The default row and column ordering is based on the variable's internal or formatted value order, not descending frequency; descending-frequency ordering requires the ORDER=FREQ option.\n\n[Incorrect - Listing roomtype*season builds a separate one-way table for each distinct roomtype value instead of a single combined two-way table.]: The asterisk syntax roomtype*season produces one combined two-way cross-tabulation table, not a series of separate one-way tables."
+    },
+    {
+      "id": 22,
+      "question_number_original": "Q2",
+      "question_text": "An annual craft fair wants its vendor report available as both a PDF and a Word-compatible document from a single run:\nods pdf file=\"/output/vendor_report.pdf\"; ods rtf file=\"/output/vendor_report.rtf\"; proc print data=work.vendors; run; ods pdf close; ods rtf close;\nWhat does this sequence of ODS statements accomplish?",
+      "question_images": [],
+      "options": [
+        "It sends the PROC PRINT output to only one destination, since ODS can only have one open destination active at a time.",
+        "It opens PDF and RTF before PROC PRINT runs, so one step's output reaches both, each closed separately after.",
+        "It requires a separate PROC PRINT step for each open destination, since a single procedure cannot feed multiple destinations at once.",
+        "It writes the vendor report to a temporary WORK file first, then converts that file separately into PDF and RTF afterward."
+      ],
+      "correct_answer": "It opens PDF and RTF before PROC PRINT runs, so one step's output reaches both, each closed separately after.",
+      "user_answer": "It sends the PROC PRINT output to only one destination, since ODS can only have one open destination active at a time.",
+      "explanation": "[Correct - It opens PDF and RTF before PROC PRINT runs, so one step's output reaches both, each closed separately after.]: Opening ODS PDF and ODS RTF before the procedure runs means PROC PRINT's single execution is captured by both open destinations at once, and each is later closed independently with its own ODS ... CLOSE statement.\n\n[Incorrect - It sends the PROC PRINT output to only one destination, since ODS can only have one open destination active at a time.]: ODS supports multiple simultaneously open destinations; opening both PDF and RTF before the procedure runs lets one step's output reach both destinations.\n\n[Incorrect - It requires a separate PROC PRINT step for each open destination, since a single procedure cannot feed multiple destinations at once.]: A single procedure step's output is automatically routed to every currently open ODS destination; separate PROC PRINT steps per destination are not needed.\n\n[Incorrect - It writes the vendor report to a temporary WORK file first, then converts that file separately into PDF and RTF afterward.]: ODS writes directly to each open destination as the procedure runs; there is no intermediate WORK-file conversion step involved."
+    },
+    {
+      "id": 23,
+      "question_number_original": "Q4",
+      "question_text": "work.quarterly has variables q1_sales q2_sales q3_sales q4_sales. A programmer wants to increase every quarter's value by 3% in place, using an array rather than four separate assignment statements. Which code correctly does this?",
+      "question_images": [],
+      "options": [
+        "array qsales{4} q1_sales q2_sales q3_sales q4_sales; do i = 1 to 4; qsales{i} = qsales{i} * 1.03; end;",
+        "array qsales{4} q1_sales q2_sales q3_sales q4_sales; do i = 1 to 4; qsales = qsales{i} * 1.03; end;",
+        "array qsales{4} q1_sales q2_sales q3_sales q4_sales; qsales = qsales * 1.03;",
+        "array qsales{4} q1_sales q2_sales q3_sales q4_sales; do i = 1 to 3; qsales{i} = qsales{i} * 1.03; end;"
+      ],
+      "correct_answer": "array qsales{4} q1_sales q2_sales q3_sales q4_sales; do i = 1 to 4; qsales{i} = qsales{i} * 1.03; end;",
+      "user_answer": "array qsales{4} q1_sales q2_sales q3_sales q4_sales; do i = 1 to 4; qsales{i} = qsales{i} * 1.03; end;",
+      "explanation": "[Correct - array qsales{4} q1_sales q2_sales q3_sales q4_sales; do i = 1 to 4; qsales{i} = qsales{i} * 1.03; end;]: The array groups the four quarter variables under one name, and the DO loop from 1 to 4 revisits each element qsales{i}, multiplying it by 1.03 in place — covering all four quarters exactly once.\n\n[Incorrect - array qsales{4} q1_sales q2_sales q3_sales q4_sales; do i = 1 to 4; qsales = qsales{i} * 1.03; end;]: The left side of the assignment must be the individual element qsales{i}, not the bare array name qsales — assigning to the array name itself isn't valid the way this statement is written.\n\n[Incorrect - array qsales{4} q1_sales q2_sales q3_sales q4_sales; qsales = qsales * 1.03;]: An array name by itself isn't a value you can multiply — you must reference an individual element such as qsales{i} inside a loop; this statement isn't valid as written.\n\n[Incorrect - array qsales{4} q1_sales q2_sales q3_sales q4_sales; do i = 1 to 3; qsales{i} = qsales{i} * 1.03; end;]: The loop only runs i = 1 to 3, which updates q1_sales through q3_sales but leaves q4_sales (index 4) untouched at its original value."
+    },
+    {
+      "id": 24,
+      "question_number_original": "Q2",
+      "question_text": "A logistics manager wants a roster listing every warehouse location, even ones that currently have no staff assigned, alongside any assigned staff member's name.\nproc sql; select w.warehouse_id, w.city, s.staff_name from warehouses as w left join staff_assignments as s on w.warehouse_id = s.warehouse_id; quit;\nWhat happens to a warehouse_id in warehouses that has no matching row in staff_assignments?",
+      "question_images": [],
+      "options": [
+        "It still appears exactly once in the result, with staff_name set to missing",
+        "It is silently dropped from the result set entirely",
+        "The query fails at run time because LEFT JOIN requires a match on both sides",
+        "It appears once for every row in staff_assignments regardless of warehouse_id, producing a full cross join"
+      ],
+      "correct_answer": "It still appears exactly once in the result, with staff_name set to missing",
+      "user_answer": "It still appears exactly once in the result, with staff_name set to missing",
+      "explanation": "[Correct - It still appears exactly once in the result, with staff_name set to missing]: LEFT JOIN keeps every row from the left table (warehouses) whether or not staff_assignments has a matching warehouse_id; when there's no match, the columns pulled from the right table, like staff_name, come back missing.\n\n[Incorrect - The query fails at run time because LEFT JOIN requires a match on both sides]: LEFT JOIN is specifically designed to tolerate an unmatched left-side row without failing — that is the defining behavior that distinguishes it from an inner join.\n\n[Incorrect - It is silently dropped from the result set entirely]: Dropping unmatched warehouse rows is inner-join behavior — a LEFT JOIN specifically preserves every row from the left table (warehouses) regardless of a match.\n\n[Incorrect - It appears once for every row in staff_assignments regardless of warehouse_id, producing a full cross join]: An unrestricted cross join ignoring the ON condition would do that — LEFT JOIN still applies the ON condition, it only adds unmatched left-side rows once each rather than ignoring the join key."
+    },
+    {
+      "id": 25,
+      "question_number_original": "Q5",
+      "question_text": "Several SAS character functions can be used while searching text, but they don't all return the same kind of result.\nWhich of the following functions return the numeric starting position of a substring within a longer string, rather than returning the substring's text itself?\n(Choose two.)",
+      "question_images": [],
+      "options": [
+        "FIND",
+        "TRANWRD",
+        "SUBSTR",
+        "INDEX",
+        "SCAN"
+      ],
+      "correct_answer": "FIND | INDEX",
+      "user_answer": "FIND | TRANWRD",
+      "explanation": "[Correct - FIND]: FIND behaves like INDEX, adding options such as case-insensitive matching and a starting position, but it likewise returns the numeric position of the match, not the matched text.\n\n[Correct - INDEX]: INDEX searches a string for a substring and returns the numeric position where it first occurs, or 0 if not found.\n\n[Incorrect - TRANWRD]: TRANWRD returns a modified copy of the original string with occurrences of one substring replaced by another — it returns text, not a position.\n\n[Incorrect - SUBSTR]: SUBSTR returns the characters found at a given position and length — a piece of text, not a position number.\n\n[Incorrect - SCAN]: SCAN returns the text of the nth word from a delimited string — a substring, not a position."
+    },
+    {
+      "id": 26,
+      "question_number_original": "Q7",
+      "question_text": "Given the SAS data set WORK.ONE:\n- X Y Z\n- 1 A 27\n- 1 A 33\n- 1 B 45\n- 2 A 52\n- 2 B 69\n- 3 B 70\n- 4 A 82\n- 4 C 91\nThe following SAS program is submitted:\ndata WORK.TWO;\nset WORK.ONE;\nby X Y;\nif First.Y;\nrun;\nproc print data=WORK.TWO noobs;\nrun;\nSelect one option.\nWhich report is produced?",
+      "question_images": [],
+      "options": [
+        "- 1 A 27\n- 1 B 45\n- 2 A 52\n- 2 B 69\n- 3 B 70\n- 4 A 82\n- 4 C 91",
+        "- 1 B 45\n- 2 A 52\n- 2 B 69\n- 3 B 70\n- 4 A 82\n- 4 C 91",
+        "- 1 A 33\n- 1 B 45\n- 2 A 52\n- 2 B 69\n- 3 B 70\n- 4 A 82\n- 4 C 91",
+        "- 1 A 27\n- 1 B 45\n- 2 A 52\n- 2 B 69\n- 4 A 82\n- 4 C 91"
+      ],
+      "correct_answer": "- 1 A 27\n- 1 B 45\n- 2 A 52\n- 2 B 69\n- 3 B 70\n- 4 A 82\n- 4 C 91",
+      "user_answer": "- 1 A 27\n- 1 B 45\n- 2 A 52\n- 2 B 69\n- 3 B 70\n- 4 A 82\n- 4 C 91",
+      "explanation": "[Correct - - 1 A 27\n- 1 B 45\n- 2 A 52\n- 2 B 69\n- 3 B 70\n- 4 A 82\n- 4 C 91]: With BY X Y, First.Y is true whenever the X-Y combination changes — that happens at every row here: (1,A), (1,B), (2,A), (2,B), (3,B), (4,A), (4,C) — so IF First.Y keeps exactly one row per distinct X-Y combination in that order.\n\n[Incorrect - - 1 A 27\n- 1 B 45\n- 2 A 52\n- 2 B 69\n- 4 A 82\n- 4 C 91]: This report omits the row for X=3, Y=B (Z=70) — that combination is also a new X-Y group where First.Y is true, so it should appear in the output.\n\n[Incorrect - - 1 A 33\n- 1 B 45\n- 2 A 52\n- 2 B 69\n- 3 B 70\n- 4 A 82\n- 4 C 91]: First.Y for the (1,A) group is true on the first row of that group (Z=27), not the second (Z=33), so this report keeps the wrong observation for that group.\n\n[Incorrect - - 1 B 45\n- 2 A 52\n- 2 B 69\n- 3 B 70\n- 4 A 82\n- 4 C 91]: This report is missing the row for X=1, Y=A (Z=27) — First.Y is also true at the very first observation, which starts a new X-Y group, so that row belongs in the output."
+    },
+    {
+      "id": 27,
+      "question_number_original": "Q2",
+      "question_text": "Which statement about SAS libraries is true?",
+      "question_images": [],
+      "options": [
+        "A SAS library is a collection of one or more SAS files that are referenced and stored as a unit.",
+        "A single SAS library must contain files that are stored in different physical locations.",
+        "At the end of each session, SAS deletes the contents of all SAS libraries.",
+        "You refer to a SAS library by a logical name called a libname."
+      ],
+      "correct_answer": "A SAS library is a collection of one or more SAS files that are referenced and stored as a unit.",
+      "user_answer": "A SAS library is a collection of one or more SAS files that are referenced and stored as a unit.",
+      "explanation": "[Correct - A SAS library is a collection of one or more SAS files that are referenced and stored as a unit.]: This is the standard definition of a SAS library: a collection of SAS files (data sets, catalogs, etc.) recognized and referenced as a single unit through a libref.\n\n[Incorrect - A single SAS library must contain files that are stored in different physical locations.]: A SAS library's files are stored together at one physical location (e.g. one folder or one data source), not scattered across different locations.\n\n[Incorrect - You refer to a SAS library by a logical name called a libname.]: The precise term for the logical name assigned to a library is a \"libref\" — LIBNAME is the name of the statement used to assign it, not the name of the reference itself.\n\n[Incorrect - At the end of each session, SAS deletes the contents of all SAS libraries.]: Only the WORK library is temporary and cleared at the end of a session; permanent libraries retain their contents across sessions."
+    },
+    {
+      "id": 28,
+      "question_number_original": "Q5",
+      "question_text": "A coffee shop stores each transaction in work.cuptrans, with variables orderid, item, price, baristaid, and ordertime:\nproc print data=work.cuptrans; var item price ordertime; run;\nWhat effect does the VAR statement have in this PROC PRINT step?",
+      "question_images": [],
+      "options": [
+        "It renames orderid and baristaid to item, price, and ordertime in the printed output.",
+        "It restricts the report to just item, price, and ordertime, in that order, omitting the rest.",
+        "It produces three separate reports, one for each of item, price, and ordertime listed on the statement.",
+        "It sorts the printed report first by item, then by price, then by ordertime, before displaying any rows."
+      ],
+      "correct_answer": "It restricts the report to just item, price, and ordertime, in that order, omitting the rest.",
+      "user_answer": "It renames orderid and baristaid to item, price, and ordertime in the printed output.",
+      "explanation": "[Correct - It restricts the report to just item, price, and ordertime, in that order, omitting the rest.]: VAR both selects which variables appear in the PROC PRINT report and controls their left-to-right display order, so orderid and baristaid are simply left out of the output.\n\n[Incorrect - It renames orderid and baristaid to item, price, and ordertime in the printed output.]: VAR selects and orders existing variables for display; it does not rename any variable in the data set or the report.\n\n[Incorrect - It produces three separate reports, one for each of item, price, and ordertime listed on the statement.]: A single VAR statement produces one combined report containing the listed variables as columns, not a separate report per variable.\n\n[Incorrect - It sorts the printed report first by item, then by price, then by ordertime, before displaying any rows.]: VAR only controls which variables are displayed and their column order; sorting the rows would require a prior PROC SORT or a BY statement, not VAR."
+    },
+    {
+      "id": 29,
+      "question_number_original": "Q8",
+      "question_text": "A print shop wants a report of only its urgent orders from a larger order queue:\nproc print data=work.orders; where rushorder = 'Y'; var orderid customer duedate; run;\nWhat does the WHERE statement do in this PROC PRINT step?",
+      "question_images": [],
+      "options": [
+        "It prints all orders but sorts rush orders to appear at the top of the report.",
+        "It permanently deletes every non-rush order from the work.orders data set once the step completes.",
+        "It creates a new variable named rushorder in the report if one does not already exist in the data set.",
+        "It restricts the report to rows where rushorder equals 'Y', without altering work.orders itself."
+      ],
+      "correct_answer": "It restricts the report to rows where rushorder equals 'Y', without altering work.orders itself.",
+      "user_answer": "It prints all orders but sorts rush orders to appear at the top of the report.",
+      "explanation": "[Correct - It restricts the report to rows where rushorder equals 'Y', without altering work.orders itself.]: WHERE filters which observations are read for the report at the row-selection stage; it leaves the source data set work.orders completely unchanged, only affecting what is displayed.\n\n[Incorrect - It prints all orders but sorts rush orders to appear at the top of the report.]: WHERE excludes non-matching rows from the report entirely rather than reordering all rows with matching ones simply pushed to the top.\n\n[Incorrect - It permanently deletes every non-rush order from the work.orders data set once the step completes.]: WHERE in a PROC PRINT step only filters what is displayed in that report; it does not modify, delete from, or overwrite the underlying work.orders data set.\n\n[Incorrect - It creates a new variable named rushorder in the report if one does not already exist in the data set.]: WHERE evaluates an existing variable's value to filter rows; it does not create a new variable, and rushorder must already exist in work.orders for this condition to work."
+    },
+    {
+      "id": 30,
+      "question_number_original": "Q7",
+      "question_text": "An HR DATA step computes each employee's tenure:\ndata hr.staff; set hr.staff_raw; tenure_days = today() - hire_date; run;\nWhat does the expression today() - hire_date calculate for each employee?",
+      "question_images": [],
+      "options": [
+        "The number of days between hire_date and today, since subtracting two SAS date values yields a plain day count.",
+        "The employee's precise age expressed in whole years, calculated directly as of today's current date.",
+        "A brand-new SAS date value representing hire_date shifted forward by the current date's day-of-month component only.",
+        "The number of business days only, excluding weekends and holidays entirely, counted between hire_date and today's date."
+      ],
+      "correct_answer": "The number of days between hire_date and today, since subtracting two SAS date values yields a plain day count.",
+      "user_answer": "The number of days between hire_date and today, since subtracting two SAS date values yields a plain day count.",
+      "explanation": "[Correct - The number of days between hire_date and today, since subtracting two SAS date values yields a plain day count.]: Both TODAY() and hire_date are SAS date values, and subtracting one date value from another yields the number of calendar days between them.\n\n[Incorrect - The employee's precise age expressed in whole years, calculated directly as of today's current date.]: Age in years would require dividing the day difference by roughly 365.25 or similar; a plain subtraction of two date values yields a day count, not an age.\n\n[Incorrect - The number of business days only, excluding weekends and holidays entirely, counted between hire_date and today's date.]: A plain subtraction counts every calendar day including weekends; excluding weekends would require additional logic beyond this expression.\n\n[Incorrect - A brand-new SAS date value representing hire_date shifted forward by the current date's day-of-month component only.]: Subtracting two SAS date values produces a numeric day count, not another date value."
+    }
+  ]
+}
+  </script>
+
+  <script>
+    // =========================================================================
+    // SAS LEARN PRACTICE EXAM SIMULATOR ENGINE (A00-231)
+    // =========================================================================
+    let rawDataset = {
+      exam_title: "(SAMPLE) SAS 9.4 Base Programming - Performance-Based Exam (A00-231)",
+      total_attempts_scanned: 0,
+      total_questions_raw: 0,
+      total_unique_questions: 0,
+      questions: []
+    };
+
+    // Active Exam Attempt State
+    let examConfig = {
+      maxQuestions: 45,       // Official A00-231 target: 40-45 questions
+      shuffleQuestions: false,
+      shuffleOptions: false,
+      practiceMode: false     // Instant feedback toggle
+    };
+
+    let activeQuestions = []; // Subset of questions for current attempt
+    let currentPage = 0;      // 0 = Information Page, 1..N = Questions, N+1 = Summary / Review Report
+    let userSelections = {};  // qIndex (1..N) -> Array of selected option strings
+    let flaggedQuestions = {}; // qIndex (1..N) -> boolean
+    let practiceRevealed = {}; // qIndex (1..N) -> boolean (when Check Answer clicked in Practice Mode)
+    let isSubmitted = false;
+    let lastScoreSummary = null;
+
+    // Official Timer: 135 minutes = 8100 seconds
+    const OFFICIAL_DURATION_SEC = 135 * 60;
+    let remainingSeconds = OFFICIAL_DURATION_SEC;
+    let elapsedSeconds = 0;
+    let timerInterval = null;
+
+    function loadEmbeddedDataset() {
+      try {
+        const el = document.getElementById("embeddedQuestionBank");
+        if (el && el.textContent.trim()) {
+          rawDataset = JSON.parse(el.textContent);
+        }
+      } catch (e) {
+        console.error("Failed to parse embedded question bank:", e);
+      }
+      updateBankBadge();
+    }
+
+    function updateBankBadge() {
+      const count = (rawDataset.questions || []).length;
+      const attempts = rawDataset.total_attempts_scanned || 0;
+      const badge = document.getElementById("bankStatusBadge");
+      badge.textContent = `Question Bank: ${count} / 45 unique (${attempts} attempts scanned)`;
+    }
+
+    function shuffleArray(arr) {
+      const copy = arr.slice();
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function isMultiChoiceQuestion(q) {
+      const txt = (q.question_text || "").toLowerCase();
+      if (txt.includes("choose two") || txt.includes("choose 2") || txt.includes("choose three") || txt.includes("which two")) {
+        return true;
+      }
+      return (q.correct_answer || "").includes(" | ");
+    }
+
+    function getQuestionPointWeight(index1Based) {
+      // Per SAS Learn Practice Exam instructions:
+      // First 20 project/coding questions worth 2.00 points each, remaining regular questions worth 1.00 point each
+      return index1Based <= 20 ? 2.0 : 1.0;
+    }
+
+    function initExamAttempt() {
+      const allQs = (rawDataset.questions || []).slice();
+      let pool = examConfig.shuffleQuestions ? shuffleArray(allQs) : allQs;
+      const limit = Math.min(examConfig.maxQuestions || 45, pool.length);
+      activeQuestions = pool.slice(0, limit).map((q, idx) => {
+        const opts = examConfig.shuffleOptions ? shuffleArray(q.options || []) : (q.options || []).slice();
+        return {
+          ...q,
+          examIndex: idx + 1,
+          displayOptions: opts,
+          points: getQuestionPointWeight(idx + 1),
+          isMulti: isMultiChoiceQuestion(q)
+        };
+      });
+
+      userSelections = {};
+      flaggedQuestions = {};
+      practiceRevealed = {};
+      isSubmitted = false;
+      lastScoreSummary = null;
+      currentPage = 0;
+
+      startCountdownTimer();
+      renderAll();
+    }
+
+    function startCountdownTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      remainingSeconds = OFFICIAL_DURATION_SEC;
+      elapsedSeconds = 0;
+      updateTimerUI();
+
+      timerInterval = setInterval(() => {
+        if (isSubmitted) return;
+        remainingSeconds--;
+        elapsedSeconds++;
+        if (remainingSeconds <= 0) {
+          remainingSeconds = 0;
+          updateTimerUI();
+          clearInterval(timerInterval);
+          submitExamAndScore(true);
+        } else {
+          updateTimerUI();
+        }
+      }, 1000);
+    }
+
+    function formatTimeMMSS(totalSec) {
+      const mins = Math.floor(totalSec / 60);
+      const secs = totalSec % 60;
+      return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+    }
+
+    function updateTimerUI() {
+      const el = document.getElementById("timerText");
+      const pill = document.getElementById("examTimerDisplay");
+      if (el) el.textContent = formatTimeMMSS(remainingSeconds);
+      if (pill) {
+        if (remainingSeconds < 600 && !isSubmitted) {
+          pill.classList.add("warning");
+        } else {
+          pill.classList.remove("warning");
+        }
+      }
+    }
+
+    function isQuestionAnswered(qIdx) {
+      const sel = userSelections[qIdx];
+      return Array.isArray(sel) && sel.length > 0;
+    }
+
+    function evaluateQuestionCorrectness(q) {
+      const sel = userSelections[q.examIndex] || [];
+      const official = (q.correct_answer || "")
+        .split(" | ")
+        .map(s => s.trim())
+        .filter(Boolean);
+      if (sel.length !== official.length || official.length === 0) return false;
+      const normSel = sel.map(s => s.trim().toLowerCase()).sort();
+      const normOff = official.map(s => s.trim().toLowerCase()).sort();
+      return normSel.every((val, i) => val === normOff[i]);
+    }
+
+    // =========================================================================
+    // RENDERING: LEFT SIDEBAR, MIDDLE STATUS CARD, RIGHT CREAM CONTENT BOX
+    // =========================================================================
+    function renderAll() {
+      renderQuizNavGrid();
+      renderMiddleStatusCard();
+      renderMainCreamContent();
+      renderBottomNavButtons();
+    }
+
+    function renderQuizNavGrid() {
+      const grid = document.getElementById("quizNavGrid");
+      grid.innerHTML = "";
+
+      // Box 0: Information page square (blank top-aligned or 'i' like Moodle)
+      const infoBtn = document.createElement("div");
+      infoBtn.className = "qn-btn" + (currentPage === 0 ? " active" : "");
+      infoBtn.title = "Information";
+      infoBtn.innerHTML = `<span>i</span>`;
+      infoBtn.onclick = () => goToPage(0);
+      grid.appendChild(infoBtn);
+
+      // Boxes 1..N
+      activeQuestions.forEach(q => {
+        const btn = document.createElement("div");
+        const classes = ["qn-btn"];
+        if (currentPage === q.examIndex) classes.push("active");
+        if (flaggedQuestions[q.examIndex]) classes.push("flagged");
+
+        if (isSubmitted) {
+          const ok = evaluateQuestionCorrectness(q);
+          classes.push(ok ? "review-correct" : "review-wrong");
+        } else if (isQuestionAnswered(q.examIndex)) {
+          classes.push("answered");
+        }
+
+        btn.className = classes.join(" ");
+        btn.title = `Question ${q.examIndex}`;
+        btn.innerHTML = `<span>${q.examIndex}</span>`;
+        btn.onclick = () => goToPage(q.examIndex);
+        grid.appendChild(btn);
+      });
+
+      const finishLink = document.getElementById("finishAttemptLink");
+      if (isSubmitted) {
+        finishLink.textContent = "View Score Report ...";
+      } else {
+        finishLink.textContent = "Finish attempt ...";
+      }
+    }
+
+    function renderMiddleStatusCard() {
+      const card = document.getElementById("questionStatusCard");
+      if (currentPage === 0) {
+        card.innerHTML = `<div class="q-info-heading">Information</div>`;
+        return;
+      }
+
+      if (currentPage > activeQuestions.length) {
+        card.innerHTML = `
+          <div class="q-info-heading">${isSubmitted ? "Review" : "Summary"}</div>
+          <div class="q-info-line">${activeQuestions.length} questions</div>
+        `;
+        return;
+      }
+
+      const q = activeQuestions[currentPage - 1];
+      const answered = isQuestionAnswered(q.examIndex);
+      const isFlagged = !!flaggedQuestions[q.examIndex];
+
+      let statusText = answered ? "Answer saved" : "Not yet answered";
+      if (isSubmitted) {
+        const ok = evaluateQuestionCorrectness(q);
+        statusText = ok ? "Correct" : (answered ? "Incorrect" : "Not answered");
+      }
+
+      const ptsText = isSubmitted
+        ? `Marked ${(evaluateQuestionCorrectness(q) ? q.points : 0).toFixed(2)} out of ${q.points.toFixed(2)}`
+        : `Marked out of ${q.points.toFixed(2)}`;
+
+      card.innerHTML = `
+        <div class="q-info-heading">Question ${q.examIndex}</div>
+        <div class="q-info-line">${statusText}</div>
+        <div class="q-info-line">${ptsText}</div>
+        <div class="flag-toggle-btn ${isFlagged ? "flagged" : ""}" onclick="toggleFlagQuestion(${q.examIndex})">
+          <span>${isFlagged ? "&#9873;" : "&#9872;"}</span>
+          <span>${isFlagged ? "Remove flag" : "Flag question"}</span>
+        </div>
+      `;
+    }
+
+    function escapeHtml(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function formatQuestionPromptHtml(questionText) {
+      const lines = String(questionText || "").split("\n");
+      const blocks = [];
+      let codeBuffer = [];
+
+      const codeRegex = /^(data\s+|set\s+|merge\s+|proc\s+|run;|quit;|ods\s+|title\d?\s+|where\s+|if\s+|else\s+|do\s+|end;|drop\s+|keep\s+|retain\s+|by\s+|class\s+|var\s+|id\s+|output\s+|input\s+|format\s+|length\s+|<\s*insert|year=|amount=|total_due|months_elapsed|campaign_total|subjid\s+|1001\s+|1002\s+)/i;
+
+      function flushCode() {
+        if (codeBuffer.length > 0) {
+          blocks.push(`<div class="sas-code-block">${escapeHtml(codeBuffer.join("\n"))}</div>`);
+          codeBuffer = [];
+        }
+      }
+
+      for (const rawLine of lines) {
+        const line = rawLine.trim();
+        if (!line) continue;
+        if (codeRegex.test(line) || (codeBuffer.length > 0 && (line.endsWith(";") || /^\d{4}\s+/.test(line)))) {
+          codeBuffer.push(line);
+        } else {
+          flushCode();
+          blocks.push(`<div class="q-prompt-line">${escapeHtml(line)}</div>`);
+        }
+      }
+      flushCode();
+      return blocks.join("");
+    }
+
+    function renderMainCreamContent() {
+      const box = document.getElementById("mainCreamBox");
+
+      // PAGE 0: INFORMATION PAGE (Exact clone of Image 1 + Image 2 Exam Details)
+      if (currentPage === 0) {
+        const totalInBank = (rawDataset.questions || []).length;
+        box.innerHTML = `
+          <h3>Differences between this Practice Exam and the actual Certification Exam</h3>
+          <ul>
+            <li>The actual certification exam is delivered via Pearson VUE testing centers or online proctored environments.</li>
+            <li>For the performance-based section in the actual exam, you will have access to a live SAS environment to write and execute SAS code to answer questions about the results.</li>
+            <li>In this practice exam, explanations and feedback are provided upon submission to help you review key SAS® 9.4 M5 concepts.</li>
+          </ul>
+          <p>The first 20 questions are questions about programming projects, worth 2-3 points each. For each project, you'll be presented with the scenario and instructions first, and then have 2-4 questions about that project.</p>
+          <p>After the project questions, there are 25 regular questions worth 1 point each.</p>
+
+          <!-- IMAGE 2: OFFICIAL SAS A00-231 EXAM DETAILS -->
+          <div class="exam-details-showcase">
+            <h2 class="exam-details-header">Exam Details</h2>
+            <div class="exam-details-grid">
+              <ul class="exam-details-bullets">
+                <li>40-45 multiple choice and short-answer questions.</li>
+                <li>135 minutes to complete exam.</li>
+                <li>Passing score is 725 (score range from 200 to 1,000 points).</li>
+                <li>This exam is based on SAS<sup>&reg;</sup> 9.4 M5.</li>
+                <li>This exam is administered by SAS and Pearson VUE.</li>
+              </ul>
+              <div class="exam-details-right-box">
+                <div class="exam-official-title">SAS<sup>&reg;</sup> 9.4 Base Programming &ndash; Performance-Based Exam</div>
+                <div class="exam-official-id">Use this exam ID to register: <strong>A00-231</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SIMULATOR CONFIGURATION CONTROLS -->
+          <div class="simulator-config-panel">
+            <div class="config-group">
+              <label>
+                <strong>Questions in Attempt:</strong>
+                <select id="cfgMaxQuestions" onchange="onUpdateConfig()">
+                  <option value="45" ${examConfig.maxQuestions === 45 ? "selected" : ""}>Up to 45 Questions (Official Standard — Currently ${totalInBank} in Bank)</option>
+                  <option value="10" ${examConfig.maxQuestions === 10 ? "selected" : ""}>10 Questions (Quick Sample)</option>
+                  <option value="20" ${examConfig.maxQuestions === 20 ? "selected" : ""}>20 Questions</option>
+                </select>
+              </label>
+              <label>
+                <input type="checkbox" id="cfgShuffleQ" ${examConfig.shuffleQuestions ? "checked" : ""} onchange="onUpdateConfig()" />
+                Shuffle Questions
+              </label>
+              <label>
+                <input type="checkbox" id="cfgShuffleOpt" ${examConfig.shuffleOptions ? "checked" : ""} onchange="onUpdateConfig()" />
+                Shuffle Options
+              </label>
+              <label>
+                <input type="checkbox" id="cfgPracticeMode" ${examConfig.practiceMode ? "checked" : ""} onchange="onUpdateConfig()" />
+                Practice Mode (Show "Check Answer" on each question)
+              </label>
+            </div>
+            <div>
+              <button type="button" class="btn-sas-primary" onclick="goToPage(1)">Start / Continue Exam &rarr;</button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // SUMMARY / FINISH ATTEMPT OR FINAL SCORE REPORT PAGE
+      if (currentPage > activeQuestions.length) {
+        renderSummaryOrScorePage(box);
+        return;
+      }
+
+      // QUESTION PAGE (1..N)
+      const q = activeQuestions[currentPage - 1];
+      const selectedArr = userSelections[q.examIndex] || [];
+      const officialArr = (q.correct_answer || "")
+        .split(" | ")
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      const showFeedback = isSubmitted || !!practiceRevealed[q.examIndex];
+
+      let imagesHtml = "";
+      if (Array.isArray(q.question_images) && q.question_images.length > 0) {
+        imagesHtml = `<div class="q-images-wrap">` +
+          q.question_images.map(url => `<img src="${escapeHtml(url)}" alt="Question figure" />`).join("") +
+          `</div>`;
+      }
+
+      const inputType = q.isMulti ? "checkbox" : "radio";
+      const chooseLabel = q.isMulti ? "Select one or more:" : "Select one:";
+
+      const optionsHtml = (q.displayOptions || []).map((optText, idx) => {
+        const isChecked = selectedArr.includes(optText);
+        const isOfficialCorrect = officialArr.some(c => c.toLowerCase() === optText.trim().toLowerCase());
+
+        const rowClasses = ["option-row"];
+        if (isChecked) rowClasses.push("selected");
+        if (showFeedback) {
+          if (isOfficialCorrect) rowClasses.push("review-correct-choice");
+          else if (isChecked && !isOfficialCorrect) rowClasses.push("review-wrong-choice");
+        }
+
+        const isCodeOption = /(;|title\d?\s|year\s+amount|class\s+location|group\s+by|by\s+location)/i.test(optText);
+        const letter = String.fromCharCode(97 + idx);
+
+        return `
+          <label class="${rowClasses.join(" ")}" onclick="onSelectOption(${q.examIndex}, ${idx}); return false;">
+            <input type="${inputType}" name="q_opt_${q.examIndex}" ${isChecked ? "checked" : ""} ${isSubmitted ? "disabled" : ""} />
+            <div class="option-text ${isCodeOption ? "code-like" : ""}"><strong>${letter}.</strong> ${escapeHtml(optText)}</div>
+          </label>
+        `;
+      }).join("");
+
+      let practiceCheckBtnHtml = "";
+      if (examConfig.practiceMode && !isSubmitted) {
+        practiceCheckBtnHtml = `
+          <div style="margin-top: 14px;">
+            <button type="button" class="btn-sas-outline" onclick="togglePracticeReveal(${q.examIndex})">
+              ${practiceRevealed[q.examIndex] ? "Hide Answer & Explanation" : "Check Answer & Explanation"}
+            </button>
+          </div>
+        `;
+      }
+
+      let feedbackHtml = "";
+      if (showFeedback) {
+        const isOk = evaluateQuestionCorrectness(q);
+        const bannerClass = isOk ? "correct-banner" : "wrong-banner";
+        const statusHeading = isOk
+          ? "&#10004; Your answer is correct."
+          : "&#10008; Your answer is incorrect.";
+        const explanationBody = q.explanation
+          ? escapeHtml(q.explanation)
+          : "No additional option-level feedback recorded yet for this question. Run more attempts in the Harvester Tool with untested options to enrich explanations.";
+
+        feedbackHtml = `
+          <div class="feedback-panel ${bannerClass}">
+            <div class="feedback-title">${statusHeading}</div>
+            <div style="margin-bottom:8px;"><strong>Official Correct Answer:</strong> ${escapeHtml(q.correct_answer)}</div>
+            <div class="feedback-body"><strong>Explanation / Feedback:</strong>\n${explanationBody}</div>
+          </div>
+        `;
+      }
+
+      box.innerHTML = `
+        <div class="q-prompt-container">
+          ${formatQuestionPromptHtml(q.question_text)}
+          ${imagesHtml}
+        </div>
+        <div class="answer-instruction-label">${chooseLabel}</div>
+        <div class="options-list">
+          ${optionsHtml}
+        </div>
+        ${practiceCheckBtnHtml}
+        ${feedbackHtml}
+      `;
+    }
+
+    function renderSummaryOrScorePage(box) {
+      let scoreBannerHtml = "";
+      if (isSubmitted && lastScoreSummary) {
+        const s = lastScoreSummary;
+        const badgeHtml = s.passed
+          ? `<span class="status-badge-pass">PASSED (&ge; 725)</span>`
+          : `<span class="status-badge-fail">FAILED (&lt; 725)</span>`;
+
+        scoreBannerHtml = `
+          <div class="score-report-banner">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+              <h2 style="margin:0; font-size:18px; color:#032d60;">
+                Official SAS A00-231 Practice Exam Score Report
+              </h2>
+              <div>${badgeHtml}</div>
+            </div>
+            <div class="score-report-grid">
+              <div class="score-metric-box">
+                <div class="metric-label">Scaled Score (200–1,000)</div>
+                <div class="metric-val">${s.scaledScore} / 1000</div>
+              </div>
+              <div class="score-metric-box">
+                <div class="metric-label">Passing Threshold</div>
+                <div class="metric-val">725</div>
+              </div>
+              <div class="score-metric-box">
+                <div class="metric-label">Raw Correct</div>
+                <div class="metric-val">${s.correctCount} / ${s.totalQuestions} (${s.percentScore}%)</div>
+              </div>
+              <div class="score-metric-box">
+                <div class="metric-label">Weighted Points</div>
+                <div class="metric-val">${s.earnedPoints.toFixed(1)} / ${s.maxPoints.toFixed(1)}</div>
+              </div>
+              <div class="score-metric-box">
+                <div class="metric-label">Time Elapsed</div>
+                <div class="metric-val">${formatTimeMMSS(s.timeTakenSec)}</div>
+              </div>
+            </div>
+            <p style="margin:14px 0 0 0; font-size:13px; color:#555;">
+              Click any question number below or in the <strong>QUIZ NAVIGATION</strong> panel on the left to review your answer, the official correct answer, and full explanations.
+            </p>
+          </div>
+        `;
+      }
+
+      const rowsHtml = activeQuestions.map(q => {
+        const answered = isQuestionAnswered(q.examIndex);
+        const flagged = flaggedQuestions[q.examIndex] ? " &#9873; Flagged" : "";
+        let statusCell = answered ? "Answer saved" : "Not yet answered";
+        if (isSubmitted) {
+          const ok = evaluateQuestionCorrectness(q);
+          statusCell = ok
+            ? `<strong style="color:#2e7d32;">&#10004; Correct (${q.points.toFixed(2)} pts)</strong>`
+            : `<strong style="color:#c62828;">&#10008; Incorrect (0.00 / ${q.points.toFixed(2)} pts)</strong>`;
+        }
+        return `
+          <tr>
+            <td><a href="#" onclick="goToPage(${q.examIndex}); return false;" style="color:#006699; font-weight:600;">Question ${q.examIndex}</a>${flagged}</td>
+            <td>${statusCell}</td>
+          </tr>
+        `;
+      }).join("");
+
+      const actionButtonsHtml = !isSubmitted
+        ? `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:18px; flex-wrap:wrap; gap:12px;">
+            <button type="button" class="btn-sas-outline" onclick="goToPage(${activeQuestions.length || 1})">Return to attempt</button>
+            <button type="button" class="btn-sas-primary" onclick="submitExamAndScore(false)">Submit all and finish</button>
+          </div>
+        `
+        : `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:18px; flex-wrap:wrap; gap:12px;">
+            <button type="button" class="btn-sas-outline" onclick="goToPage(1)">Review Questions (1..${activeQuestions.length})</button>
+            <button type="button" class="btn-sas-primary" onclick="resetNewExamAttempt()">Start a New Practice Attempt</button>
+          </div>
+        `;
+
+      box.innerHTML = `
+        ${scoreBannerHtml}
+        <h3>${isSubmitted ? "Attempt Review Summary" : "Summary of Attempt"}</h3>
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th style="width:40%;">Question</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
+        ${actionButtonsHtml}
+      `;
+    }
+
+    function renderBottomNavButtons() {
+      const btnPrev = document.getElementById("btnPrevPage");
+      const btnNext = document.getElementById("btnNextPage");
+
+      if (currentPage === 0) {
+        btnPrev.style.visibility = "hidden";
+        btnNext.style.visibility = "visible";
+        btnNext.textContent = "Next page";
+      } else if (currentPage <= activeQuestions.length) {
+        btnPrev.style.visibility = "visible";
+        btnNext.style.visibility = "visible";
+        btnNext.textContent = currentPage === activeQuestions.length ? "Finish attempt ..." : "Next page";
+      } else {
+        btnPrev.style.visibility = "visible";
+        btnNext.style.visibility = "hidden";
+      }
+    }
+
+    // =========================================================================
+    // INTERACTION HANDLERS
+    // =========================================================================
+    function goToPage(pageIdx) {
+      currentPage = pageIdx;
+      renderAll();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function prevPage() {
+      if (currentPage > 0) {
+        goToPage(currentPage - 1);
+      }
+    }
+
+    function nextPage() {
+      if (currentPage <= activeQuestions.length) {
+        goToPage(currentPage + 1);
+      }
+    }
+
+    function openFinishSummary() {
+      goToPage(activeQuestions.length + 1);
+    }
+
+    function toggleFlagQuestion(qIdx) {
+      flaggedQuestions[qIdx] = !flaggedQuestions[qIdx];
+      renderQuizNavGrid();
+      renderMiddleStatusCard();
+    }
+
+    function togglePracticeReveal(qIdx) {
+      practiceRevealed[qIdx] = !practiceRevealed[qIdx];
+      renderMainCreamContent();
+    }
+
+    function onSelectOption(qIdx, optIdx) {
+      if (isSubmitted) return;
+      const q = activeQuestions[qIdx - 1];
+      const optText = q.displayOptions[optIdx];
+
+      if (q.isMulti) {
+        const cur = (userSelections[qIdx] || []).slice();
+        const pos = cur.indexOf(optText);
+        if (pos >= 0) cur.splice(pos, 1);
+        else cur.push(optText);
+        userSelections[qIdx] = cur;
+      } else {
+        userSelections[qIdx] = [optText];
+      }
+
+      renderQuizNavGrid();
+      renderMiddleStatusCard();
+      renderMainCreamContent();
+    }
+
+    function onUpdateConfig() {
+      const selMax = document.getElementById("cfgMaxQuestions");
+      const chkQ = document.getElementById("cfgShuffleQ");
+      const chkOpt = document.getElementById("cfgShuffleOpt");
+      const chkPrac = document.getElementById("cfgPracticeMode");
+
+      if (selMax) examConfig.maxQuestions = parseInt(selMax.value, 10) || 45;
+      if (chkQ) examConfig.shuffleQuestions = chkQ.checked;
+      if (chkOpt) examConfig.shuffleOptions = chkOpt.checked;
+      if (chkPrac) examConfig.practiceMode = chkPrac.checked;
+
+      initExamAttempt();
+    }
+
+    function submitExamAndScore(autoExpired) {
+      if (isSubmitted) return;
+      isSubmitted = true;
+      if (timerInterval) clearInterval(timerInterval);
+
+      let correctCount = 0;
+      let earnedPoints = 0;
+      let maxPoints = 0;
+
+      activeQuestions.forEach(q => {
+        maxPoints += q.points;
+        if (evaluateQuestionCorrectness(q)) {
+          correctCount++;
+          earnedPoints += q.points;
+        }
+      });
+
+      const ratio = maxPoints > 0 ? earnedPoints / maxPoints : 0;
+      // Official SAS A00-231 Scaled Score: 200 to 1,000 points, passing score = 725
+      const scaledScore = Math.round(200 + ratio * 800);
+      const percentScore = Math.round(ratio * 100);
+      const passed = scaledScore >= 725;
+
+      lastScoreSummary = {
+        correctCount,
+        totalQuestions: activeQuestions.length,
+        earnedPoints,
+        maxPoints,
+        scaledScore,
+        percentScore,
+        passed,
+        timeTakenSec: elapsedSeconds,
+        autoExpired: !!autoExpired
+      };
+
+      currentPage = activeQuestions.length + 1;
+      renderAll();
+    }
+
+    function resetNewExamAttempt() {
+      initExamAttempt();
+    }
+
+    function onSearchQuestion(query) {
+      const qStr = (query || "").trim().toLowerCase();
+      if (!qStr) return;
+      const match = activeQuestions.find(q =>
+        (q.question_text || "").toLowerCase().includes(qStr) ||
+        (q.options || []).some(o => o.toLowerCase().includes(qStr))
+      );
+      if (match) {
+        goToPage(match.examIndex);
+      }
+    }
+
+    function triggerImportJson() {
+      const inp = document.getElementById("jsonFileInput");
+      if (inp) inp.click();
+    }
+
+    function handleFileImport(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && Array.isArray(parsed.questions)) {
+            rawDataset = parsed;
+            updateBankBadge();
+            initExamAttempt();
+          } else {
+            alert("Invalid JSON schema: missing 'questions' array.");
+          }
+        } catch (err) {
+          alert("Failed to parse JSON file: " + err.message);
+        }
+      };
+      reader.readAsText(file, "utf-8");
+    }
+
+    // Initialize on load
+    window.addEventListener("DOMContentLoaded", () => {
+      loadEmbeddedDataset();
+      initExamAttempt();
+    });
+  </script>
+</body>
+</html>
