@@ -167,8 +167,9 @@ run;
 - **IN=** data set option follows a table in MERGE and names a **temporary** variable added to the PDV (included during execution, **not written** to the output). Each IN= variable is associated with the table it follows; assigned **0 or 1** – 0 = that table does not include the BY value for that row, 1 = it does.
 - class2 rows: Alfred/Alice/Barbara inUpdate 1, inTeachers 1; Carol 0 and 1; David 1 and 0.
 
-### Question (05_3_q1) – interactive "Check My Answer"; NOT answered
+### Question (05_3_q1) – interactive "Check My Answer"; not clicked on the site
 - Which statement writes only matching rows? (`merge pg2.class_update(in=inUpdate) pg2.class_teachers(in=inTeachers); by name; ???`) a. `where inUpdate=1 and inTeachers=1;` b. `where inUpdate=1 or inTeachers=1;` c. `if inUpdate=1 and inTeachers=1;` d. `if inUpdate=1 or inTeachers=1;`
+- **Derived answer: c** [DERIVED – not confirmed on the site]. Basis: IN= variables are temporary PDV variables assigned during execution, so they can't be used in WHERE (WHERE uses only input-table columns – P2 L2 "Subsetting Rows in the Execution Phase"); a match means both flags are 1 (class2 rows Alfred/Alice/Barbara: 1 and 1); summary: "The subsetting IF or IF-THEN logic can be used to subset rows based on matching or nonmatching rows". d would also keep Carol (0,1) and David (1,0).
 
 ### Demo: Merging Tables with Nonmatching Rows (6:55) – p205d03.sas, from screenshots
 - Syntax: `DATA output-table; MERGE input-table1(IN=var1) input-table2(IN=var2) ...; BY BY-column(s); RUN;`
@@ -301,5 +302,5 @@ quit;
 
 ## Gaps
 - Practices (05_1_p, 05_3_p) open in pop-ups – not opened.
-- Question 05_3_q1 is interactive ("Check My Answer") – not answered. Activity 05_3_q2 captured (p205a04).
+- Question 05_3_q1 is interactive ("Check My Answer") – not clicked; answer derived from lesson content (marked [DERIVED]). Activity 05_3_q2 captured (p205a04).
 - Quiz answers not available (quiz not submitted, by rule).

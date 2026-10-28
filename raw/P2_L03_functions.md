@@ -300,8 +300,9 @@ run;
 2. Assignment with INPUT using the renamed column; the original name on the left → Volume added to the PDV as numeric (PDV: … CharVolume $12, Date2 N8, Volume N8).
 3. DROP the renamed column.
 
-### Question (03_4_q3) – interactive "Check My Answer"; NOT answered
+### Question (03_4_q3) – interactive "Check My Answer"; not clicked on the site
 - Which statement renames the existing column Product in sashelp.shoes as Type? a. `set sashelp.shoes rename=(Type=Product);` b. `set sashelp.shoes(rename=(Type=Product));` c. `set sashelp.shoes(rename(Product=Type));` d. `set sashelp.shoes(rename=(Product=Type));`
+- **Derived answer: d** [DERIVED – not confirmed on the site]. Basis: "Converting the Type of an Existing Column" above – RENAME= goes in parentheses after the table name, "current name on the left, new name on the right", outer parentheses around all data set options and inner parentheses around the renamed columns (`set pg2.stocks2(rename=(Volume=CharVolume));`). a: no parentheses around the option; b: names reversed; c: missing `=` after RENAME.
 
 ### Converting Numeric Values to Character Values (1:02) – from screenshots
 - `PUT(source, format)` – first argument = numeric column to convert, second = format telling SAS how to display the new character value.
@@ -405,6 +406,6 @@ run;
 
 ## Gaps
 - Practices (03_2_p, 03_3_p) open in pop-ups – not opened.
-- Question 03_4_q3 is interactive ("Check My Answer") – not answered.
+- Question 03_4_q3 is interactive ("Check My Answer") – not clicked; answer derived from lesson content (marked [DERIVED]).
 - One chunk of the Lesson 3 summary (CATX row + syntax box) blocked by the filter; content duplicated in the lesson pages above.
 - Quiz answers not available (quiz not submitted, by rule).

@@ -11,8 +11,9 @@ Source: SAS Programming 2 player (course id=235), text mode + screenshots. Captu
 - class_test_wide: Name, Math, Reading (Alfred 82 79; Alice 71 67; Barbara 96 86) – one row per student, measures split into multiple columns = **wide** table.
 - class_test_narrow: Name, TestSubject, TestScore (Alfred Math 82; Alfred Reading 79; …) – multiple rows per student, measures stacked in a single column = **narrow** table. Same information, different structure.
 
-### Question (07_1_q1) – interactive "Check My Answer"; NOT answered
+### Question (07_1_q1) – interactive "Check My Answer"; not clicked on the site
 - Which table and column(s) could you use with PROC MEANS (`proc means data=???; var ???; run;`) to calculate an average for all test scores combined? a. class_test_wide, Math Reading b. class_test_narrow, TestScore
+- **Derived answer: b** [DERIVED – not confirmed on the site]. Basis: in the narrow table all scores are stacked in the single column TestScore, so one VAR column gives the combined average; with the wide table, `var Math Reading;` gives a separate mean per column. CR L3 3.7 likewise says narrow tables suit PROC MEANS/FREQ reporting.
 
 ### Restructuring Data (0:36)
 - When the structure isn't what you need for analytics, restructure it. With the DATA step you can read one row and write several rows, or read multiple rows and write one row.
@@ -126,7 +127,6 @@ run;
 ```
 - DROP= data set option on the output table drops _NAME_ → wide table, one row per storm, four wind measurements.
 
-### Activity (07_2_q1) – interactive; not captured [Gap]
 
 ### Creating a Narrow Table with PROC TRANSPOSE (0:27)
 - Wide → narrow: from Wind1–Wind4 per storm, transpose the values for each Season/Basin/Name → 4 rows per storm, one wind measure per row; minor adjustments to the PROC TRANSPOSE code.
@@ -220,5 +220,5 @@ run;
 
 ## Gaps
 - Practices (07_1_p, 07_2_p) open in pop-ups – not opened.
-- Questions 07_1_q1 and 07_2_q1/q2 interactive – not answered (07_1_q1 text captured).
+- Question 07_1_q1 interactive ("Check My Answer") – not clicked; answer derived from lesson content (marked [DERIVED]). (07_2_q1 = Activity p207a03 and 07_2_q2 = Activity p207a05 – both captured above with their Show Answer answers.)
 - Quiz answers not available (quiz not submitted, by rule).
