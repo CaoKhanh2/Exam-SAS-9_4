@@ -17,15 +17,17 @@ Mode: faithful capture (read-only; quizzes read, never answered). Version: SAS9.
 
 ## SAS® Programming 2: Data Manipulation Techniques
 
+TOC: P2_00_toc.md (166 items, scormid=955).
+
 | File | Lesson | Pages (TOC) | Captured | Gaps | Date |
 |---|---|---|---|---|---|
-| P2_L01_… | L1 Controlling DATA Step Processing | – | – | – | – |
-| P2_L02_… | L2 Summarizing Data | – | – | – | – |
-| P2_L03_… | L3 Manipulating Data with Functions | – | – | – | – |
-| P2_L04_… | L4 Creating Custom Formats | – | – | – | – |
-| P2_L05_… | L5 Combining Tables | – | – | – | – |
-| P2_L06_… | L6 Processing Repetitive Code | – | – | – | – |
-| P2_L07_… | L7 Restructuring Tables | – | – | – | – |
+| P2_L01_controlling_data_step.md | L1 Controlling DATA Step Processing | 25 | all text/demos, activity answers, summary, quiz 10 Qs | practices (pop-ups) not opened | 2026-10-28 |
+| P2_L02_summarizing_data.md | L2 Summarizing Data | 21 | all | practices not opened | 2026-10-28 |
+| P2_L03_functions.md | L3 Manipulating Data with Functions | 47 | all | practices not opened; 1 interactive Q | 2026-10-28 |
+| P2_L04_custom_formats.md | L4 Creating Custom Formats | 18 | all | practices not opened | 2026-10-28 |
+| P2_L05_combining_tables.md | L5 Combining Tables | 24 | all | practices not opened; 1 interactive Q | 2026-10-28 |
+| P2_L06_do_loops.md | L6 Processing Repetitive Code | 18 | all | practices not opened | 2026-10-28 |
+| P2_L07_restructuring.md | L7 Restructuring Tables | 20 | all | practices not opened; interactive Qs | 2026-10-28 |
 
 ## SAS® Certification Review: SAS® 9.4 Base Programming Performance-Based Exam
 
