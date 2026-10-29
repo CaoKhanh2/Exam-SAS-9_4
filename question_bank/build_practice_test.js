@@ -17,3 +17,4 @@ const sim = path.join(dir, '..', 'sas_exam_simulator.html');
 embed(sim, 'practiceBank', bank, `${bank.questions.length} questions`);
 const vi = read('analyticsexam_vi.json');
 embed(sim, 'aeVietnamese', vi, `${Object.keys(vi).length} Vietnamese AnalyticsExam explanations`);
+embed(sim, 'fakeData', fs.readFileSync(path.join(dir, 'fake_course_data.sas'), 'utf8'), 'fake course data program');
