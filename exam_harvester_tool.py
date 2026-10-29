@@ -316,7 +316,8 @@ def extract_chrome_session_cookies() -> list:
                 if k32.ReadProcessMemory(h, addr, buf, mbi.RegionSize, ctypes.byref(read)):
                     data = buf.raw[:read.value]
                     if b'SESS' in data:
-                        for m in re.findall(b'SESS[a-f0-9]{32}=[a-zA-Z0-9_-]{20,40}', data):
+                        # HTTPS Drupal names it SSESS...; without S? the leading S gets cut off.
+                        for m in re.findall(b'S?SESS[a-f0-9]{32}=[a-zA-Z0-9_-]{20,40}', data):
                             cookies.add(m.decode('ascii'))
             addr += mbi.RegionSize
             if addr >= 0x7FFFFFFFFFFF:
@@ -414,7 +415,7 @@ class AnalyticsExamClient:
         self.log("Verifying session authentication on AnalyticsExam...")
         try:
             eff_url, body = self.request(MYRESULTS_URL)
-            if self._is_logged_in(body):
+            if self._is_logged_in(body, eff_url):
                 self.log("Authenticated session verified (active cookie valid).")
                 self.save_cookie(self.session_cookie)
                 return True
@@ -428,7 +429,7 @@ class AnalyticsExamClient:
             self.session_cookie = ck
             try:
                 eff_url, body = self.request(MYRESULTS_URL)
-                if self._is_logged_in(body):
+                if self._is_logged_in(body, eff_url):
                     self.log(f"Recovered valid session cookie from Chrome: {ck[:20]}...")
                     self.save_cookie(ck)
                     return True
@@ -450,7 +451,7 @@ class AnalyticsExamClient:
                     "op": "Log in",
                 }
                 eff_url, res_html = self.request(LOGIN_URL, method="POST", data=payload)
-                if self._is_logged_in(res_html):
+                if self._is_logged_in(res_html, eff_url):
                     self.log("Direct login succeeded.")
                     return True
         except Exception as e:
@@ -459,12 +460,15 @@ class AnalyticsExamClient:
         return False
 
     @staticmethod
-    def _is_logged_in(html_body: str) -> bool:
-        if not html_body:
+    def _is_logged_in(html_body: str, eff_url: str = "") -> bool:
+        if not html_body or "/user/login" in eff_url:
+            return False
+        # Anonymous pages carry body class "not-logged-in", which contains "logged-in".
+        if "not-logged-in" in html_body:
             return False
         if "Access denied" in html_body or "You are not authorized" in html_body:
             return False
-        return ('href="/logout"' in html_body) or ("logged-in" in html_body) or ("caokhanh" in html_body.lower())
+        return "/logout" in html_body
 
 
 # ---------------------------------------------------------------------------
