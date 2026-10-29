@@ -86,6 +86,10 @@
     .palette .p-sel { background: var(--accent-soft); border-color: var(--accent); }
 
     .score { font-size: 34px; font-weight: 700; }
+    textarea.code { width: 100%; min-height: 220px; resize: vertical; font: 13.5px/1.5 Consolas, "Cascadia Mono", "Courier New", monospace; color: var(--code-text); background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; tab-size: 4; }
+    .note { background: var(--warn-soft); border-left: 3px solid var(--warn); border-radius: 6px; padding: 8px 12px; margin: 10px 0; font-size: 13.5px; }
+    .codecheck { list-style: none; padding: 0; margin: 6px 0; font-size: 13.5px; }
+    .codecheck .y { color: var(--ok); } .codecheck .n { color: var(--bad); }
     #timer { font-variant-numeric: tabular-nums; font-weight: 600; }
     #timer.low { color: var(--bad); }
     .pass { color: var(--ok); } .fail { color: var(--bad); }
@@ -802,6 +806,12 @@
     const EXAM_PLAN = { D1: 10, D2: 17, D3: 9, D4: 9 };
     const EXAM_MINUTES = 135, PASS_SCORE = 725;
     const LETTERS = "ABCDEFGH";
+    // Course librefs: the tables come from the course setup program, not from this bank (see raw/CR_00_course_overview.md, raw/P1_L00_setup.md).
+    const COURSE_DATA = {
+      cr: "khóa Certification Review – chạy <code>createdataCRB_oda.sas</code> trong thư mục <code>ECRBM6</code>",
+      pg1: "khóa Programming 1 – chạy <code>createdataPG1v2_oda.sas</code> trong thư mục <code>EPG1V2</code>",
+      pg2: "khóa Programming 2 – chạy chương trình setup trong thư mục <code>EPG2V2</code>",
+    };
     const RAW_SET = { id: "analyticsexam", name: "AnalyticsExam sample (đã thu thập)" };
 
     let rawData = null, practiceData = null, aeVietnamese = {};
@@ -1000,6 +1010,70 @@
     const pickExam = () => shuffle(Object.keys(EXAM_PLAN).flatMap(s => shuffle(bank.filter(q => q.section === s)).slice(0, EXAM_PLAN[s]))).map(q => q.id);
     const fmtTime = ms => { const s = Math.max(0, Math.floor(ms / 1000)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
 
+    // ---------- programming questions: data note + code check ----------
+    function dataNote(q) {
+      const refs = [...new Set((String(q.stemHtml).replace(/<[^>]+>/g, " ").match(/\b(cr|pg1|pg2|sashelp)\.\w+/gi) || []).map(s => s.toLowerCase()))];
+      const course = refs.filter(r => COURSE_DATA[r.split(".")[0]]), help = refs.filter(r => r.startsWith("sashelp."));
+      const list = rs => rs.map(r => `<code>${esc(r)}</code>`).join(", ");
+      return (course.length ? `<div class="note">Câu này dùng bảng dữ liệu của khóa học: ${list(course)}. Bảng không có trong ngân hàng câu hỏi;
+          tạo nó trên SAS OnDemand for Academics (SAS Studio) bằng chương trình setup của
+          ${[...new Set(course.map(r => COURSE_DATA[r.split(".")[0]]))].join("; ")}, rồi chạy code của bạn ở đó.</div>` : "")
+        + (help.length ? `<div class="note">${list(help)} có sẵn trong mọi phiên SAS, không cần setup.</div>` : "");
+    }
+    // SAS code -> statements of tokens. Comments dropped, case and quote style ignored, option order ignored.
+    function statements(src) {
+      return String(src || "").replace(/\/\*[\s\S]*?\*\//g, " ").split(";")
+        .map(s => s.trim()).filter(s => s && !s.startsWith("*"))
+        .map(s => ({ text: s, tokens: (s.toLowerCase().match(/"[^"]*"|'[^']*'|[\w.$%&]+|[=<>^~]+|\S/g) || []).map(t => t.replace(/^"(.*)"$/, "'$1'")) }));
+    }
+    // ponytail: token match against the model solution, not a real SAS run; a different but valid program can score low
+    // statements -> steps keyed "data" / "proc sort" / ...; statements before the first step go to "global"
+    function steps(sts) {
+      const out = [];
+      for (const s of sts) {
+        const t = s.tokens;
+        if (t[0] === "data" || t[0] === "proc" || !out.length) out.push({ key: t[0] === "proc" ? "proc " + t[1] : t[0] === "data" ? "data" : "global", sts: [] });
+        out[out.length - 1].sts.push(s);
+      }
+      return out;
+    }
+    // which solution statements have a matching statement of yours; each of yours counts once (e.g. one RUN per step)
+    function matchStatements(sol, mine) {
+      const used = new Set();
+      return sol.map(s => {
+        const i = mine.findIndex((m, k) => !used.has(k) && m.tokens[0] === s.tokens[0] && s.tokens.every(t => m.tokens.includes(t)));
+        if (i >= 0) used.add(i);
+        return i >= 0;
+      });
+    }
+    function checkCode() {
+      const q = byId(run.ids[run.cur]);
+      const mine = steps(statements(run.code[q.id])), usedSteps = new Set();
+      const rows = steps(statements(q.solutionCode)).flatMap(st => {
+        // pair each solution step with your same-kind step that matches it best
+        let best = -1, hits = null;
+        mine.forEach((m, k) => {
+          if (usedSteps.has(k) || m.key !== st.key) return;
+          const h = matchStatements(st.sts, m.sts);
+          if (!hits || h.filter(Boolean).length > hits.filter(Boolean).length) { best = k; hits = h; }
+        });
+        if (best >= 0) usedSteps.add(best);
+        const name = st.key === "global" ? "" : st.key.toUpperCase();
+        return st.sts.map((s, i) => ({
+          hit: !!hits && hits[i],
+          label: i === 0 && st.key !== "global" ? `${name} (câu lệnh mở đầu step)` : `${name ? name + " › " : ""}${s.tokens[0].toUpperCase()} …`,
+        }));
+      });
+      const n = rows.filter(r => r.hit).length;
+      document.getElementById("codeResult").innerHTML = `
+        <div class="feedback ${n === rows.length ? "ok" : "bad"}">
+          <div class="verdict">Khớp ${n}/${rows.length} câu lệnh của code mẫu</div>
+          <ul class="codecheck">${rows.map(r => `<li class="${r.hit ? "y" : "n"}">${r.hit ? "✔" : "✘ thiếu hoặc khác:"} ${esc(r.label)}</li>`).join("")}</ul>
+          <p class="muted small">So khớp từng câu lệnh với code mẫu (không phân biệt hoa thường, thứ tự option, comment) – không chạy SAS thật.
+            Code mẫu có thể giải nhiều câu con cùng lúc nên có câu lệnh không cần cho câu này. Kết quả số vẫn chấm bằng nút <b>Kiểm tra</b>.</p>
+        </div>`;
+    }
+
     // ---------- start screen ----------
     const app = () => document.getElementById("app");
     const checkedValues = name => [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(i => i.value);
@@ -1076,7 +1150,7 @@
 
     function startRun(ids, title, exam) {
       if (!ids.length) return;
-      run = { ids, cur: 0, answers: {}, checked: {}, title: title || (run && run.title) || "",
+      run = { ids, cur: 0, answers: {}, checked: {}, code: {}, title: title || (run && run.title) || "",
               exam: exam ? { endAt: Date.now() + EXAM_MINUTES * 60000, done: false } : null };
       clearInterval(timer);
       if (exam) timer = setInterval(tickTimer, 500);
@@ -1134,7 +1208,14 @@
             <span class="letter">${LETTERS[i]}.</span><span class="body md">${html}${why}</span></label>`;
         }).join("");
       } else {
-        answerArea = `<label class="muted small" for="saInput">Câu trả lời của bạn</label>
+        answerArea = `${dataNote(q)}
+          <label class="muted small" for="codeInput">Code SAS của bạn (viết ở đây, chạy trên SAS để lấy kết quả)</label>
+          <textarea class="code" id="codeInput" spellcheck="false" autocomplete="off"
+            oninput="run.code[run.ids[run.cur]] = this.value"
+            onkeydown="if (event.key === 'Tab') { event.preventDefault(); this.setRangeText('    ', this.selectionStart, this.selectionEnd, 'end'); run.code[run.ids[run.cur]] = this.value; }">${esc(run.code[q.id] || "")}</textarea>
+          ${q.solutionCode && !examLive() ? `<div class="row" style="margin:6px 0 12px"><button type="button" onclick="checkCode()">Kiểm tra code</button>
+            <span class="muted small">So với code mẫu, chỉ ra câu lệnh còn thiếu</span></div><div id="codeResult"></div>` : ""}
+          <label class="muted small" for="saInput">Kết quả của bạn (giá trị đề hỏi)</label>
           <input type="text" id="saInput" autocomplete="off" value="${esc(a || "")}" ${done ? "disabled" : ""}
             oninput="run.answers[run.ids[run.cur]] = this.value; document.getElementById('btnCheck').disabled = !this.value.trim()">`;
       }
@@ -1288,7 +1369,7 @@
     // ---------- keyboard ----------
     document.addEventListener("keydown", e => {
       if (!run || !document.getElementById("btnCheck") || e.ctrlKey || e.altKey || e.metaKey) return;
-      if (document.activeElement && document.activeElement.tagName === "BUTTON") return; // let the button handle it
+      if (document.activeElement && /^(BUTTON|TEXTAREA)$/.test(document.activeElement.tagName)) return; // let the button / code box handle it
       const typing = document.activeElement && document.activeElement.id === "saInput";
       const q = byId(run.ids[run.cur]);
       if (!typing && /^[1-8]$/.test(e.key) && q.type === "mc" && +e.key <= q.optionHtml.length) pick(+e.key - 1);
