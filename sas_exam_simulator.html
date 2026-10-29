@@ -1046,6 +1046,14 @@
         return i >= 0;
       });
     }
+    // ponytail: SAS ODA needs a login and blocks cross-site calls, so copy the code and open the ODA sign-in page; the user signs in, opens SAS Studio, pastes and presses F3.
+    const SAS_STUDIO_URL = "https://welcome.oda.sas.com/";
+    function runInSasStudio() {
+      const box = document.getElementById("codeInput");
+      box.select();
+      document.execCommand("copy");
+      window.open(SAS_STUDIO_URL, "sasstudio");
+    }
     function checkCode() {
       const q = byId(run.ids[run.cur]);
       const mine = steps(statements(run.code[q.id])), usedSteps = new Set();
@@ -1213,8 +1221,10 @@
           <textarea class="code" id="codeInput" spellcheck="false" autocomplete="off"
             oninput="run.code[run.ids[run.cur]] = this.value"
             onkeydown="if (event.key === 'Tab') { event.preventDefault(); this.setRangeText('    ', this.selectionStart, this.selectionEnd, 'end'); run.code[run.ids[run.cur]] = this.value; }">${esc(run.code[q.id] || "")}</textarea>
-          ${q.solutionCode && !examLive() ? `<div class="row" style="margin:6px 0 12px"><button type="button" onclick="checkCode()">Kiểm tra code</button>
-            <span class="muted small">So với code mẫu, chỉ ra câu lệnh còn thiếu</span></div><div id="codeResult"></div>` : ""}
+          <div class="row" style="margin:6px 0 12px"><button type="button" onclick="runInSasStudio()">Chạy trên SAS Studio</button>
+            ${q.solutionCode && !examLive() ? `<button type="button" onclick="checkCode()">Kiểm tra code</button>
+            <span class="muted small">So với code mẫu, chỉ ra câu lệnh còn thiếu</span>` : ""}</div>
+          ${q.solutionCode && !examLive() ? `<div id="codeResult"></div>` : ""}
           <label class="muted small" for="saInput">Kết quả của bạn (giá trị đề hỏi)</label>
           <input type="text" id="saInput" autocomplete="off" value="${esc(a || "")}" ${done ? "disabled" : ""}
             oninput="run.answers[run.ids[run.cur]] = this.value; document.getElementById('btnCheck').disabled = !this.value.trim()">`;
