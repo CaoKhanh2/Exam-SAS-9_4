@@ -5175,7 +5175,7 @@
       "format": "Course quiz",
       "difficulty": "",
       "type": "mc",
-      "stem": "Based on the program and data shown below, which of the following is true? Table cities (State, City): CA Sacramento, OR Eugene, UT Provo, CA Pasadena, NV Reno, CA Palo Alto.",
+      "stem": "Based on the program and data shown below, which of the following is true?\n\nTable cities:\n```text\nState  City\nCA     Sacramento\nOR     Eugene\nUT     Provo\nCA     Pasadena\nNV     Reno\nCA     Palo Alto\n```",
       "code": "proc print data=cities;\n    where STATE='ca';\nrun;",
       "options": [
         "A syntax error is generated because STATE is uppercase in the program.",
@@ -5741,7 +5741,7 @@
       "format": "Course quiz",
       "difficulty": "",
       "type": "mc",
-      "stem": "Given the following program and data, how many rows will be in the quizdups table? Table quiz (Name, Score): Scott 8, Scott 8, Charlotte 10, Trevor 7, Trevor 6, Trevor 6, Drew 9.",
+      "stem": "Given the following program and data, how many rows will be in the quizdups table?\n\nTable quiz:\n```text\nName       Score\nScott      8\nScott      8\nCharlotte  10\nTrevor     7\nTrevor     6\nTrevor     6\nDrew       9\n```",
       "code": "proc sort data=quiz nodupkey dupout=quizdups;\n    by Name;\nrun;",
       "options": [
         "zero",
@@ -8184,7 +8184,7 @@
       "format": "Course quiz",
       "difficulty": "",
       "type": "mc",
-      "stem": "Consider the following DATA step. Based on the sample input file below, in what order are the variables stored in the new fin2 table?\nInput finance (SSN, Name, Salary, Date): 029-46-9261 Rudelich 35000 02JAN17 · 074-53-9892 Vincent 35000 02JAN17 · 228-88-9649 Benito 28000 16JAN17 · 442-21-8075 Sirignano 5000 06FEB17 · 446-93-2122 Harbinger 33900 06FEB17 · 776-84-5391 Phillipon 29750 06JUN16 · 929-75-0218 Gunter 27500 06JUN16",
+      "stem": "Consider the following DATA step. Based on the sample input file below, in what order are the variables stored in the new fin2 table?\n\nInput finance:\n```text\nSSN          Name       Salary  Date\n029-46-9261  Rudelich   35000   02JAN17\n074-53-9892  Vincent    35000   02JAN17\n228-88-9649  Benito     28000   16JAN17\n442-21-8075  Sirignano  5000    06FEB17\n446-93-2122  Harbinger  33900   06FEB17\n776-84-5391  Phillipon  29750   06JUN16\n929-75-0218  Gunter     27500   06JUN16\n```",
       "code": "data fin2;\n    set finance;\n    keep Name Raise NewSalary Date;\n    if Salary>25000 then Raise=0.03;\n    else Raise=0.05;\n    NewSalary=(Salary*Raise)+Salary;\nrun;",
       "options": [
         "Name, Raise, NewSalary, Date",
@@ -8346,7 +8346,7 @@
       "format": "Course quiz",
       "difficulty": "",
       "type": "mc",
-      "stem": "True or False: In this example, both the RETAIN and sum statements are required to create the Total column.\nOutput shown (Sales, Total): 100 100 · 200 300 · . 300 · 300 600",
+      "stem": "True or False: In this example, both the RETAIN and sum statements are required to create the Total column.\n\nOutput shown:\n```text\nSales  Total\n100    100\n200    300\n.      300\n300    600\n```",
       "code": "data retailTotal;\n    set retail;\n    retain Total 0;\n    Total+Sales;\nrun;",
       "options": [
         "True",
@@ -8450,7 +8450,7 @@
       "format": "Course quiz",
       "difficulty": "",
       "type": "mc",
-      "stem": "What is the value of First.Make and Last.Make for row 167 if sashelp.cars is sorted by Make?\nRows shown (Make, Model, Type): 165 Honda Odyssey EX Sedan · 166 Honda S2000 convertible 2dr Sports · 167 Hummer H2 SUV · 168 Hyundai Santa Fe GLS SUV · 169 Hyundai Accent 2dr hatch Sedan · 170 Hyundai Accent GL 4dr Sedan",
+      "stem": "What is the value of First.Make and Last.Make for row 167 if sashelp.cars is sorted by Make?\n\nRows shown:\n```text\nRow  Make     Model                  Type\n165  Honda    Odyssey EX             Sedan\n166  Honda    S2000 convertible 2dr  Sports\n167  Hummer   H2                     SUV\n168  Hyundai  Santa Fe GLS           SUV\n169  Hyundai  Accent 2dr hatch       Sedan\n170  Hyundai  Accent GL 4dr          Sedan\n```",
       "code": "data cars;\n    set sashelp.cars(keep=Model Make Type);\n    by Make;\nrun;",
       "options": [
         "First.Make=1 and Last.Make=1",
@@ -8690,7 +8690,7 @@
       "format": "Course quiz",
       "difficulty": "",
       "type": "mc",
-      "stem": "True or False: Based on the data below, the doctor1 and doctor2 tables have the same rows.\nData customers (Title, Name): Ms. Farr,Sue · Dr. Cox,Kay B. · Mr. Mason,Ron · Ms. Ruth,G. H. · Ms. Van Allsburg,Jan F. · DR. Mitchell,Marc J. · Ms. Mills,Dorothy E. · Dr. Webb,Jonathan W.",
+      "stem": "True or False: Based on the data below, the doctor1 and doctor2 tables have the same rows.\n\nData customers:\n```text\nTitle  Name\nMs.    Farr,Sue\nDr.    Cox,Kay B.\nMr.    Mason,Ron\nMs.    Ruth,G. H.\nMs.    Van Allsburg,Jan F.\nDR.    Mitchell,Marc J.\nMs.    Mills,Dorothy E.\nDr.    Webb,Jonathan W.\n```",
       "code": "data doctor1;\n    set customers;\n    Title=upcase(Title);\n    where Title=\"DR.\";\nrun;\n\ndata doctor2;\n    set customers;\n    where upcase(Title)=\"DR.\";\nrun;",
       "options": [
         "True",
@@ -9093,7 +9093,7 @@
       "format": "Course quiz",
       "difficulty": "",
       "type": "mc",
-      "stem": "After this code runs, what is the order of the columns in the empsall table?\nempscn (Name, Status, Country): Chang M China · Li M China · Ming S China. empsjp (Name, Status, Region): Cho F Japan · Tomi M Japan",
+      "stem": "After this code runs, what is the order of the columns in the empsall table?\n\nempscn:\n```text\nName   Status  Country\nChang  M       China\nLi     M       China\nMing   S       China\n```\n\nempsjp:\n```text\nName  Status  Region\nCho   F       Japan\nTomi  M       Japan\n```",
       "code": "data empsall;\n    set empscn empsjp;\nrun;",
       "options": [
         "Name, Status",
@@ -9120,7 +9120,7 @@
       "format": "Course quiz",
       "difficulty": "",
       "type": "mc",
-      "stem": "Which statement creates the empsall table as shown?\nempscn (Name, Status, Country): Chang M China · Li M China · Ming S China. empsjp: Cho O Japan · Tomi M Japan with column Region. empsall shows Name, Status, Country with all 5 rows and Japan in Country.",
+      "stem": "Which statement creates the empsall table as shown?\n\nempscn:\n```text\nName   Status  Country\nChang  M       China\nLi     M       China\nMing   S       China\n```\n\nempsjp:\n```text\nName  Status  Region\nCho   O       Japan\nTomi  M       Japan\n```\n\nempsall:\n```text\nName   Status  Country\nChang  M       China\nLi     M       China\nMing   S       China\nCho    O       Japan\nTomi   M       Japan\n```",
       "code": "",
       "options": [
         "set empscn(rename=(Country=Region)) empsjp;",
@@ -9200,7 +9200,7 @@
       "format": "Course quiz",
       "difficulty": "",
       "type": "mc",
-      "stem": "What happens if you submit the following program to merge the donor1 and donor2 tables shown below?\ndonor1 (ID, Type, Units): 2304 0 16 · 1129 A 48 · 1129 A 50 · 1129 A 57 · 2486 B 63. donor2 (ID, Code, Units): 1129 63 32 · 2304 61 45 · 1287 64 67 (as displayed – neither table appears sorted by ID)",
+      "stem": "What happens if you submit the following program to merge the donor1 and donor2 tables shown below? (As displayed, neither table appears sorted by ID.)\n\ndonor1:\n```text\nID    Type  Units\n2304  0     16\n1129  A     48\n1129  A     50\n1129  A     57\n2486  B     63\n```\n\ndonor2:\n```text\nID    Code  Units\n1129  63    32\n2304  61    45\n1287  64    67\n```",
       "code": "data combine;\n    merge donor1 donor2;\n    by ID;\nrun;",
       "options": [
         "The merged data set contains some missing values because not all rows have matching rows in the other data set.",
@@ -9227,7 +9227,7 @@
       "format": "Course quiz",
       "difficulty": "",
       "type": "mc",
-      "stem": "If you merge the tables project and hours by ID and Name, how many rows does the new table contain?\nproject (ID, Name, Dept, Project): 000 Miguel A12 Document · 111 Fred B45 Survey · 222 Diane B45 Document · 888 Monique A12 Document · 999 Vien D03 Survey. hours (ID, Name, Hours): 111 Fred 35 · 222 Diane 40 · 777 Steve 0 · 888 Monique 37",
+      "stem": "If you merge the tables project and hours by ID and Name, how many rows does the new table contain?\n\nproject:\n```text\nID   Name     Dept  Project\n000  Miguel   A12   Document\n111  Fred     B45   Survey\n222  Diane    B45   Document\n888  Monique  A12   Document\n999  Vien     D03   Survey\n```\n\nhours:\n```text\nID   Name     Hours\n111  Fred     35\n222  Diane    40\n777  Steve    0\n888  Monique  37\n```",
       "code": "",
       "options": [
         "three",
@@ -9254,7 +9254,7 @@
       "format": "Course quiz",
       "difficulty": "",
       "type": "mc",
-      "stem": "If you merge the tables reps, close, and bonus by ID, what is the value of Bonus in the third observation in the new data set?\nreps (ID, Name): 1 Nay Rong · 2 Kelly Windsor · 3 Julio Meraz. close (ID, Sale): 1 $28,000 · 2 $30,000 · 2 $40,000 · 3 $15,000 · 3 $20,000 · 3 $25,000. bonus (ID, Bonus): 1 $2,000 · 2 $4,000 · 3 $3,000",
+      "stem": "If you merge the tables reps, close, and bonus by ID, what is the value of Bonus in the third observation in the new data set?\n\nreps:\n```text\nID  Name\n1   Nay Rong\n2   Kelly Windsor\n3   Julio Meraz\n```\n\nclose:\n```text\nID  Sale\n1   $28,000\n2   $30,000\n2   $40,000\n3   $15,000\n3   $20,000\n3   $25,000\n```\n\nbonus:\n```text\nID  Bonus\n1   $2,000\n2   $4,000\n3   $3,000\n```",
       "code": "",
       "options": [
         "$4,000",
@@ -9308,7 +9308,7 @@
       "format": "Course quiz",
       "difficulty": "",
       "type": "mc",
-      "stem": "In this merge, how many rows are written to the output table other (same project and hours tables as Q6)\nproject (ID, Name, Dept, Project): 000 Miguel A12 Document · 111 Fred B45 Survey · 222 Diane B45 Document · 888 Monique A12 Document · 999 Vien D03 Survey. hours (ID, Name, Hours): 111 Fred 35 · 222 Diane 40 · 777 Steve 0 · 888 Monique 37",
+      "stem": "In this merge, how many rows are written to the output table other? (Same project and hours tables as Q6.)\n\nproject:\n```text\nID   Name     Dept  Project\n000  Miguel   A12   Document\n111  Fred     B45   Survey\n222  Diane    B45   Document\n888  Monique  A12   Document\n999  Vien     D03   Survey\n```\n\nhours:\n```text\nID   Name     Hours\n111  Fred     35\n222  Diane    40\n777  Steve    0\n888  Monique  37\n```",
       "code": "data match other;\n    merge project(in=p) hours(in=h);\n    by ID;\n    if p=1 and h=1 then output match;\n    else output other;\nrun;",
       "options": [
         "unknown",
@@ -9766,7 +9766,7 @@
       "format": "Course quiz",
       "difficulty": "",
       "type": "mc",
-      "stem": "The following DATA step creates the sales_wide table. Could PROC TRANSPOSE be used to produce the same result?\nqtr_sales (Qtr, Type, Amount): 1 Goal 1000 · 1 Sales 1300 · 2 Goal 1200 · 2 Sales 1400 · 3 Goal 1500 · 3 Sales 1400 · 4 Goal 2000 · 4 Sales 2100 → sales_wide (Qtr, Goal, Sales, Difference): 1 1000 1300 -300 · 2 1200 1400 -200 · 3 1500 1400 100 · 4 2000 2100 -100",
+      "stem": "The following DATA step creates the sales_wide table. Could PROC TRANSPOSE be used to produce the same result?\n\nqtr_sales:\n```text\nQtr  Type   Amount\n1    Goal   1000\n1    Sales  1300\n2    Goal   1200\n2    Sales  1400\n3    Goal   1500\n3    Sales  1400\n4    Goal   2000\n4    Sales  2100\n```\n\nsales_wide:\n```text\nQtr  Goal  Sales  Difference\n1    1000  1300   -300\n2    1200  1400   -200\n3    1500  1400   100\n4    2000  2100   -100\n```",
       "code": "data sales_wide(drop=Type Amount);\n    set qtr_sales;\n    retain Goal;\n    by Qtr;\n    if Type=\"Goal\" then Goal=Amount;\n    else Sales=Amount;\n    if last.Qtr;\n    Difference=Goal-Sales;\nrun;",
       "options": [
         "Yes",
@@ -9791,7 +9791,7 @@
       "format": "Course quiz",
       "difficulty": "",
       "type": "mc",
-      "stem": "Which statement must be added in PROC TRANSPOSE to create the phone_n table?\nphone_w (Employee_ID, Home, Work, Cell): 120106, 120107 (no Cell), 120108 → phone_n (Employee_ID, Phone_Type, Phone): 9 rows, three per employee (120107 Cell row has blank Phone)",
+      "stem": "Which statement must be added in PROC TRANSPOSE to create the phone_n table?\n\nphone_w (columns Employee_ID, Home, Work, Cell): employees 120106, 120107 (no Cell value), 120108.\n\nphone_n (columns Employee_ID, Phone_Type, Phone): 9 rows, three per employee; the 120107 Cell row has a blank Phone.",
       "code": "proc transpose data=phone_w\n               out=phone_n(rename=(col1=Phone))\n               name=Phone_Type;\n    var Home Work Cell;\n\nrun;",
       "options": [
         "id Employee_ID;",
@@ -15775,7 +15775,7 @@
       "format": "Course quiz",
       "difficulty": "",
       "type": "mc",
-      "stem": "What is the result of the step? donors1 (ID Type Units): 2304 O 16; 1129 A 48; 1129 A 50; 2486 B 63. donors2 (ID Code Units): 1129 63 32; 2304 61 45; 1387 64 67.",
+      "stem": "What is the result of the step?\n\ndonors1:\n```text\nID    Type  Units\n2304  O     16\n1129  A     48\n1129  A     50\n2486  B     63\n```\n\ndonors2:\n```text\nID    Code  Units\n1129  63    32\n2304  61    45\n1387  64    67\n```",
       "code": "data combine; merge donors1 donors2; by ID; run;",
       "options": [
         "combine is created with four columns and five rows.",
@@ -15829,7 +15829,7 @@
       "format": "Course quiz",
       "difficulty": "",
       "type": "mc",
-      "stem": "What are the values of C and A during the third iteration of the DATA step? clients (Name ID): Ankerton 11123; Davis 22298; Masters 33351. amounts (Name Amt): Ankerton 92; Ankerton 43; Masters 27.",
+      "stem": "What are the values of C and A during the third iteration of the DATA step?\n\nclients:\n```text\nName      ID\nAnkerton  11123\nDavis     22298\nMasters   33351\n```\n\namounts:\n```text\nName      Amt\nAnkerton  92\nAnkerton  43\nMasters   27\n```",
       "code": "data client_amount; merge clients(in=C) amounts(in=A); by Name; run;",
       "options": [
         "C=0 and A=0",
@@ -15856,7 +15856,7 @@
       "format": "Course quiz",
       "difficulty": "",
       "type": "mc",
-      "stem": "What is the value of Location in the output table? loc1 (Code Location): A France. loc2 (Code Location): A Belgium. loc3 (Code Location): A Italy.",
+      "stem": "What is the value of Location in the output table?\n\nloc1:\n```text\nCode  Location\nA     France\n```\n\nloc2:\n```text\nCode  Location\nA     Belgium\n```\n\nloc3:\n```text\nCode  Location\nA     Italy\n```",
       "code": "data locALL; merge loc1 loc2 loc3; by Code; run;",
       "options": [
         "Italy",
@@ -16776,7 +16776,7 @@
       "format": "Course quiz",
       "difficulty": "",
       "type": "mc",
-      "stem": "Which statements are needed in PROC TRANSPOSE to go from the narrow table to the wide table? Narrow (Day, Meal, Food): Saturday Breakfast Yogurt; Saturday Lunch Sandwich; Saturday Dinner Steak; Sunday Breakfast Pancakes; Sunday Lunch Salad; Sunday Dinner Lasagna. Wide: Day, Breakfast, Lunch, Dinner.",
+      "stem": "Which statements are needed in PROC TRANSPOSE to go from the narrow table to the wide table?\n\nNarrow:\n```text\nDay       Meal       Food\nSaturday  Breakfast  Yogurt\nSaturday  Lunch      Sandwich\nSaturday  Dinner     Steak\nSunday    Breakfast  Pancakes\nSunday    Lunch      Salad\nSunday    Dinner     Lasagna\n```\n\nWide columns: Day, Breakfast, Lunch, Dinner.",
       "code": "",
       "options": [
         "by Day; var Meal Food;",
